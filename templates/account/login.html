@@ -4,6 +4,13 @@
 
 {% block content %}
     <h1>Login</h1>
+    {# Login failed alert. #}
+    {% if form.errors %}
+        <div class="alert alert-danger alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Danger!</strong> Your username and password didn't match. Please try again.
+        </div>
+    {% endif %}
     <form action="{% url 'login' %}" method="post">
         <div class="form-group">
             <label for="username">{{ form.username.label_tag }}</label>
