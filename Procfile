@@ -1,0 +1,1 @@
+web: gunicorn acrevista.wsgi --log-file -
