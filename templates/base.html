@@ -82,6 +82,14 @@
 <div class="clearfix"></div>
 {# MAIN AREA #}
 <main class="container" role="main">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message|safe }}
+            </div>
+        {% endfor %}
+    {% endif %}
     {% block content %}
     {% endblock %}
 </main>
