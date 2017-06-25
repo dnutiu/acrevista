@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     # login / logout urls
     url(r'^register/$', views.register, name='register'),
-    url(r'^login/$', login, {'template_name': 'account/login.html'}, name='login'),
+    url(r'^login/$', views.user_login, name='login'),
     url(r'^logout/$', logout, {'next_page': '/'}, name='logout'),
     url(r'^logout-then-login/$', logout_then_login, name='logout_then_login'),
     # Password change.

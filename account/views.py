@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from account.forms import LoginForm
 from .models import Profile
 from .forms import UserRegistrationForm
@@ -14,7 +13,9 @@ def dashboard(request):
 
 # Login the user.
 def user_login(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated():
+        return redirect('dashboard')
+    elif request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -22,11 +23,11 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'account/dashboard.html')
+                    return redirect('dashboard')
                 else:
-                    return HttpResponse('Disabled account')
+                    return render(request, 'account/login.html', {'form': form, 'error': 'Disabled account'})
             else:
-                return HttpResponse('Invalid login')
+                return render(request, 'account/login.html', {'form': form, 'error': 'Disabled account'})
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})
@@ -34,7 +35,9 @@ def user_login(request):
 
 # Will register a user an create a profile for it.
 def register(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated():
+        return redirect('dashboard')
+    elif request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
             cd = user_form.cleaned_data
