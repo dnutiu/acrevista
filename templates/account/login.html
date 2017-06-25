@@ -13,15 +13,25 @@
     {% endif %}
     <form action="{% url 'login' %}" method="post">
         <div class="form-group">
-            <label for="username">{{ form.username.label_tag }}</label>
+            <label for="username">Username</label>
             {% render_field form.username class="form-control" id="username" placeholder="Username" %}
         </div>
         <div class="form-group">
-            <label for="password">{{ form.password.label_tag }}</label>
+            <label for="password">Password</label>
             {% render_field form.password class="form-control" id="password" placeholder="Password" %}
         </div>
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
+                <a href="{% url 'password_reset' %}">Forgot password?</a>
+                <div class="clearfix"></div>
+                <a href="{% url 'register' %}">Need an account?</a>
+            </div>
+        </div>
     </form>
-    {# TODO: Add register link, forgot passowrd #}
+
+
 {% endblock %}
