@@ -12,9 +12,10 @@ class LoginForm(forms.Form):
 class UserRegistrationForm(forms.ModelForm):
     first_name = forms.CharField(label="First Name", widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", widget=forms.TextInput, required=True)
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput, required=True)
     email = forms.EmailField(label="Email", widget=forms.EmailInput, required=True)
+    bio = forms.CharField(label="Bio", widget=forms.Textarea, required=False)
 
     class Meta:
         model = User
