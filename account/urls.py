@@ -19,7 +19,7 @@ urlpatterns = [
         name='password_reset_confirm'),
     url(r'^password-reset/complete/$', password_reset_complete, name='password_reset_complete'),
     # url(r'^$', views.dashboard, name='dashboard'),
-    # url(r'^register/$', views.register, name='register'),
+    url(r'^register/$', views.register, name='register'),
     # url(r'^edit/$', views.edit, name='edit'),
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
