@@ -105,6 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# LOGIN AND OTHER OVERRIDES
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/account/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/

@@ -1,9 +1,15 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 from account.forms import LoginForm
 from .models import Profile
 from .forms import UserRegistrationForm
+
+
+@login_required
+def dashboard(request):
+    return render(request, 'account/dashboard.html')
 
 
 # Login the user.
@@ -16,7 +22,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponse('Authenticated successfully') # TODO: Redirect via render()
+                    return render(request, 'account/dashboard.html')
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -43,5 +49,4 @@ def register(request):
             return render(request, 'account/register_done.html', {'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
-    return render(request,
-                  'account/register.html', {'form': user_form})
+    return render(request, 'account/register.html', {'form': user_form})
