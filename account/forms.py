@@ -10,16 +10,21 @@ class LoginForm(forms.Form):
 
 # This form will register the user.
 class UserRegistrationForm(forms.ModelForm):
+    username = forms.EmailField(label="Email", widget=forms.EmailInput, required=True, max_length=64)
     first_name = forms.CharField(label="First Name", widget=forms.TextInput, required=True)
     last_name = forms.CharField(label="Last Name", widget=forms.TextInput, required=True)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput, required=True)
-    email = forms.EmailField(label="Email", widget=forms.EmailInput, required=True)
+    email = forms.EmailField(label="Email", widget=forms.EmailInput, required=False)
     bio = forms.CharField(label="Bio", widget=forms.Textarea, required=False)
 
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name')
+
+    # Set email as username, username must be an email.
+    def clean_email(self):
+        return self.cleaned_data['username']
 
     # Not sure if needed anymore...
     # def clean_last_name(self):
