@@ -69,3 +69,7 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'account/register.html', {'form': user_form})
+
+
+def custom_404(request):
+    return render(request, '404.html', {}, status=404)
