@@ -66,7 +66,7 @@
                            aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">Edit Personal Details</a></li>
-                            <li><a href="#">Change Password</a></li>
+                            <li><a href="{% url 'password_change' %}">Change Password</a></li>
                             <li><a href="{%  url 'email_change' %}">Change Email</a></li>
                             <li><a href="mailto:nutiudenis@hotmail.com,alext@cs.upt.ro,mudrescu@cs.upt.ro">Feedback</a>
                             </li>
