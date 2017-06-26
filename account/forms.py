@@ -2,6 +2,19 @@ from django.contrib.auth.models import User
 from django import forms
 
 
+# This form will change email for the user.
+class ChangeEmailForm(forms.ModelForm):
+    username = forms.EmailField(label="Email", widget=forms.EmailInput, required=True)
+    email = forms.EmailField(label="Email", widget=forms.EmailInput, required=False)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    def clean_email(self):
+        return self.cleaned_data['username']
+
+
 # This form will login the user.
 class LoginForm(forms.Form):
     username = forms.CharField()

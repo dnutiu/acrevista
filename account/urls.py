@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.contrib.auth.views import (login, logout, logout_then_login, password_change, password_change_done,
+from django.contrib.auth.views import (logout, logout_then_login, password_change, password_change_done,
                                        password_reset, password_reset_done, password_reset_confirm,
                                        password_reset_complete)
 from . import views
@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^password-reset/complete/$', password_reset_complete, name='password_reset_complete'),
     # Account url
     url(r'^$', views.dashboard, name='dashboard'),
-    url(r'^edit/$', views.edit, name='edit'),
+    url(r'^email-change/$', views.change_email, name='email_change'),
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
     # url(r'^users/follow/$', views.user_follow, name='user_follow'),

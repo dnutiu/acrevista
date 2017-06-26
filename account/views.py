@@ -1,13 +1,25 @@
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from account.forms import LoginForm
 from .models import Profile
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ChangeEmailForm
 
 
-def edit(request):
-    return render(request, 'account/change_email.html')
+# View for changing the user's email.
+@login_required
+def change_email(request):
+    if request.method == 'POST':
+        form = ChangeEmailForm(instance=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Email changed!")
+        else:
+            messages.error(request, "Error changing email!")
+    else:
+        form = ChangeEmailForm()
+    return render(request, 'account/change_email.html', {'form': form})
 
 
 @login_required
