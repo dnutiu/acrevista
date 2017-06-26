@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^password-reset/complete/$', password_reset_complete, name='password_reset_complete'),
     # Account url
     url(r'^$', views.dashboard, name='dashboard'),
-    # url(r'^edit/$', views.edit, name='edit'),
+    url(r'^edit/$', views.edit, name='edit'),
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
     # url(r'^users/follow/$', views.user_follow, name='user_follow'),

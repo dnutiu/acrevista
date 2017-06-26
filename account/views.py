@@ -6,6 +6,10 @@ from .models import Profile
 from .forms import UserRegistrationForm
 
 
+def edit(request):
+    return render(request, 'account/change_email.html')
+
+
 @login_required
 def dashboard(request):
     return render(request, 'account/dashboard.html')
