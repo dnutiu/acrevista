@@ -8,13 +8,13 @@
     {% if form.errors or error %}
         <div class="alert alert-danger alert-dismissable">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Danger!</strong> Your username and password didn't match. Please try again.
+            <strong>Danger!</strong> Your email and password didn't match. Please try again.
         </div>
     {% endif %}
     <form action="{% url 'login' %}" method="post">
         <div class="form-group">
-            <label for="username">Username</label>
-            {% render_field form.username class="form-control" id="username" placeholder="Username" %}
+            <label for="username">Email</label>
+            {% render_field form.username class="form-control" id="username" placeholder="Email" %}
         </div>
         <div class="form-group">
             <label for="password">Password</label>
