@@ -8,14 +8,14 @@
         {% for field in form %}
             {% for error in field.errors %}
                 <div class="alert alert-danger alert-dismissable">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
                 </div>
             {% endfor %}
         {% endfor %}
         {% for error in form.non_field_errors %}
             <div class="alert alert-danger alert-dismissable">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
             </div>
         {% endfor %}
@@ -24,19 +24,20 @@
         <fieldset>
             <legend>Create an account</legend>
             <div class="form-group">
-                <label for="inputUsername" class="col-lg-2 control-label">Email</label>
+                <label for="inputUsername" class="col-lg-2 control-label">Email<span class="red">*</span></label>
                 <div class="col-lg-10">
                     {% render_field form.username class="form-control" id="inputUsername" placeholder="Email" %}
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                <label for="inputPassword" class="col-lg-2 control-label">Password<span class="red">*</span></label>
                 <div class="col-lg-10">
                     {% render_field form.password class="form-control" id="inputPassword" placeholder="Password" %}
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputPassword2" class="col-lg-2 control-label">Repeat Password</label>
+                <label for="inputPassword2" class="col-lg-2 control-label">Repeat Password<span
+                        class="red">*</span></label>
                 <div class="col-lg-10">
                     {% render_field form.password2 class="form-control" id="inputPassword2" placeholder="Repeat Password" %}
                 </div>
@@ -45,22 +46,15 @@
         <fieldset>
             <legend>About you</legend>
             <div class="form-group">
-                <label for="inputFirstName" class="col-lg-2 control-label">First Name</label>
+                <label for="inputFirstName" class="col-lg-2 control-label">First Name<span class="red">*</span></label>
                 <div class="col-lg-10">
                     {% render_field form.first_name class="form-control" id="inputFirstName" placeholder="First Name" %}
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputLastName" class="col-lg-2 control-label">Last Name</label>
+                <label for="inputLastName" class="col-lg-2 control-label">Last Name<span class="red">*</span></label>
                 <div class="col-lg-10">
                     {% render_field form.last_name class="form-control" id="inputLastName" placeholder="Last Name" %}
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="textArea" class="col-lg-2 control-label">Bio</label>
-                <div class="col-lg-10">
-                    {% render_field form.bio class="form-control" id="textArea" rows="3" %}
-                    <span class="help-block">Say something about yourself. :)</span>
                 </div>
             </div>
         </fieldset>

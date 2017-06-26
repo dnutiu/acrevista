@@ -1,5 +1,19 @@
 from django.contrib.auth.models import User
 from django import forms
+from .models import Profile
+
+# Form that will allow user to change first and last name.
+class ChangeNameForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+
+
+# Form that will allow a profile to be edited.
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('title', 'phone', 'country', 'affiliation')
 
 
 # This form will change email for the user.
@@ -38,19 +52,6 @@ class UserRegistrationForm(forms.ModelForm):
     # Set email as username, username must be an email.
     def clean_email(self):
         return self.cleaned_data['username']
-
-    # Not sure if needed anymore...
-    # def clean_last_name(self):
-    #     cd = self.cleaned_data
-    #     if not cd['last_name']:
-    #         raise forms.ValidationError('Last Name is required.')
-    #     return cd['last_name']
-    #
-    # def clean_first_name(self):
-    #     cd = self.cleaned_data
-    #     if not cd['first_name']:
-    #         raise forms.ValidationError('First Name is required.')
-    #     return cd['first_name']
 
     # Also take a look at UserCreationForm from django.contrib.auth.forms
     def clean_password2(self):

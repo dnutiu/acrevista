@@ -4,7 +4,25 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from account.forms import LoginForm
 from .models import Profile
-from .forms import UserRegistrationForm, ChangeEmailForm
+from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
+
+
+def change_personal_details(request):
+    if request.method == 'POST':
+        name_form = ChangeNameForm(instance=request.user, data=request.POST)
+        profile_form = EditProfileForm(instance=request.user, data=request.POST)
+        if name_form.is_valid() and profile_form.is_valid():
+            name_form.save()
+            profile_form.save()
+            messages.success(request, "Profile updated successfully!")
+        else:
+            messages.error(request, "Error updating profile!")
+
+    else:
+        name_form = ChangeNameForm()
+        profile_form = EditProfileForm()
+    return render(request, 'account/change_personal_details.html',
+                  {'name_form': name_form, 'profile_form': profile_form})
 
 
 # View for changing the user's email.
