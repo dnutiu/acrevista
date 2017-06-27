@@ -57,4 +57,24 @@
             </div>
         </fieldset>
     </form>
+    <script>
+        {# This will update the selection fields to match the ones from our model. #}
+        {# If we don't do this then the user needs to manually reselect the country and title #}
+        {# everytime he wants to update his profile. #}
+        function selectElement(e, val) {
+            var options = e.options;
+            for (i = 0; i < options.length; ++i) {
+                if (options[i].value === val) {
+                    e.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        (function() {
+            var country = document.getElementById('country-field');
+            var title   = document.getElementById('title-field');
+            selectElement(country, "{{ user.profile.country }}");
+            selectElement(title, "{{ user.profile.title }}");
+        })();
+    </script>
 {% endblock %}
