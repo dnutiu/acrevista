@@ -10,7 +10,7 @@ from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditPr
 def change_personal_details(request):
     if request.method == 'POST':
         name_form = ChangeNameForm(instance=request.user, data=request.POST)
-        profile_form = EditProfileForm(instance=request.user, data=request.POST)
+        profile_form = EditProfileForm(instance=request.user.profile, data=request.POST)
         if name_form.is_valid() and profile_form.is_valid():
             name_form.save()
             profile_form.save()
@@ -82,8 +82,7 @@ def register(request):
             new_user.set_password(user_form.cleaned_data['password'])
             # Save the User object
             new_user.save()
-            Profile.objects.create(user=new_user, bio=cd['bio'])
-
+            Profile.objects.create(user=new_user)
             return render(request, 'account/register_done.html', {'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
