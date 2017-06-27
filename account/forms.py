@@ -14,6 +14,8 @@ class ChangeNameForm(forms.ModelForm):
 class EditProfileForm(forms.ModelForm):
     phone = forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     affiliation = forms.CharField(label="Affiliation", widget=forms.TextInput, required=False)
+    country = forms.ChoiceField(label="Country", widget=forms.Select, choices=Profile.COUNTRY_CHOICES, required=False)
+    title = forms.ChoiceField(label="Title", widget=forms.Select, choices=Profile.TITLE_CHOICES, required=False)
 
     class Meta:
         model = Profile

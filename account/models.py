@@ -208,10 +208,10 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    title = models.TextField(max_length=10, choices=TITLE_CHOICES, default=TITLE_CHOICES[0])
-    phone = models.TextField(max_length=64, default='')
-    country = models.TextField(max_length=64, choices=COUNTRY_CHOICES, default=COUNTRY_CHOICES[0])
-    affiliation = models.TextField(max_length=255, default='')
+    title = models.CharField(max_length=64, choices=TITLE_CHOICES, default=TITLE_CHOICES[0])
+    phone = models.CharField(max_length=64, default='')
+    country = models.CharField(max_length=64, choices=COUNTRY_CHOICES, default=COUNTRY_CHOICES[0])
+    affiliation = models.CharField(max_length=64, default='')
 
     def __srt__(self):
         return "Profile of user: {}".format(self.user.username)
