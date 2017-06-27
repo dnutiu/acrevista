@@ -23,7 +23,7 @@ def change_personal_details(request):
         name_form = ChangeNameForm()
         profile_form = EditProfileForm()
     return render(request, 'account/change_personal_details.html',
-                  {'name_form': name_form, 'profile_form': profile_form})
+                  {'name_form': name_form, 'profile_form': profile_form, 'section': 'account'})
 
 
 # View for changing the user's email.
@@ -38,12 +38,12 @@ def change_email(request):
             messages.error(request, "Error changing email!")
     else:
         form = ChangeEmailForm()
-    return render(request, 'account/change_email.html', {'form': form})
+    return render(request, 'account/change_email.html', {'form': form, 'section': 'account'})
 
 
 @login_required
 def dashboard(request):
-    return render(request, 'account/dashboard.html')
+    return render(request, 'account/dashboard.html', {'section': 'account'})
 
 
 # Login the user.
