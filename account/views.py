@@ -16,7 +16,8 @@ def change_personal_details(request):
             profile_form.save()
             messages.success(request, "Profile updated successfully!")
         else:
-            messages.error(request, "Error updating profile!")
+            print(name_form.is_valid(), profile_form.is_valid())
+            messages.warning(request, "Error updating profile!")
 
     else:
         name_form = ChangeNameForm()

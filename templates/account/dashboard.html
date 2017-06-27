@@ -3,6 +3,9 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <h1>No bine ai venit!</h1>
-    <h1>Acesta este dashboard, inseamna ca esti logat.</h1>
+    <div class="page-header">
+        <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+    </div>
+    <h2>Perhaps add submissions</h2>
+    <button class="button btn-primary">Submit a paper</button>
 {% endblock %}

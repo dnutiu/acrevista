@@ -7,15 +7,17 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
             <ul class="list-unstyled">
+                <li><a href="{% url 'personal_details' %}">Edit Personal Details</a></li>
                 <li><a href="{% url 'email_change' %}">Change Email Address</a></li>
                 <li><a href="{% url 'password_change' %}">Change Password</a></li>
             </ul>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
             {% block settings %}
             {% endblock %}
         </div>
     </div>
+    <div class="clearfix"></div>
 {% endblock %}

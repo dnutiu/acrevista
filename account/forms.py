@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import Profile
 
+
 # Form that will allow user to change first and last name.
 class ChangeNameForm(forms.ModelForm):
     class Meta:
@@ -11,6 +12,9 @@ class ChangeNameForm(forms.ModelForm):
 
 # Form that will allow a profile to be edited.
 class EditProfileForm(forms.ModelForm):
+    phone = forms.CharField(label="Phone", widget=forms.TextInput, required=False)
+    affiliation = forms.CharField(label="Affiliation", widget=forms.TextInput, required=False)
+
     class Meta:
         model = Profile
         fields = ('title', 'phone', 'country', 'affiliation')
@@ -43,7 +47,6 @@ class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput, required=True)
     email = forms.EmailField(label="Email", widget=forms.EmailInput, required=False)
-    bio = forms.CharField(label="Bio", widget=forms.Textarea, required=False)
 
     class Meta:
         model = User
