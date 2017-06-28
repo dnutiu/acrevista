@@ -18,6 +18,8 @@ from django.contrib import admin
 
 handler404 = 'account.views.custom_404'
 urlpatterns = [
+    url(r'^', include('journal.urls')), # Journal Homepage :)
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('account.urls')),
+    url(r'^journal/', include('journal.urls')),
 ]

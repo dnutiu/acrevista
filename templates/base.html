@@ -32,8 +32,21 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'dashboard' %}">Account</a></li>
-                <li{% if section == 'journal' %} class="active"{% endif %}><a href="#">Journal</a></li>
+                <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'dashboard' %}">Account</a>
+                </li>
+                <li class="dropdown {% if section == 'journal' %}active{% endif %}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="true">Journal <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'journal_home' %}">Home</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">Paper Submissions</li>
+                        <li><a href="#">Submit a paper</a></li>
+{#                                                <li><a href="#">Separated link</a></li>#}
+                        {#                        <li><a href="#">One more separated link</a></li>#}
+                    </ul>
+                </li>
                 <li{% if section == 'issues' %} class="active"{% endif %}><a href="#">Issues</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -47,7 +60,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'personal_details' %}">Edit Personal Details</a></li>
                             <li><a href="{% url 'password_change' %}">Change Password</a></li>
-                            <li><a href="{%  url 'email_change' %}">Change Email</a></li>
+                            <li><a href="{% url 'email_change' %}">Change Email</a></li>
                             <li><a href="mailto:nutiudenis@hotmail.com,alext@cs.upt.ro,mudrescu@cs.upt.ro">Feedback</a>
                             </li>
                             <li role="separator" class="divider"></li>
