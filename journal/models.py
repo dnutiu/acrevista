@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings
+from django.contrib.auth.models import User
 
 
 def user_directory_path(instance, filename):
@@ -8,7 +8,7 @@ def user_directory_path(instance, filename):
 
 
 class Paper(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='papers')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='papers')
     title = models.CharField(max_length=64, blank=False)
     description = models.TextField(max_length=500, blank=False)
     file = models.FileField(upload_to=user_directory_path, blank=False)

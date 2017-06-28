@@ -15,8 +15,7 @@ def homepage(request):
 
 def submit_paper(request):
     if request.method == 'POST':
-        form = SubmitPaperForm(instance=request.user, data=request.POST)
-        print(request.user)
+        form = SubmitPaperForm(instance=request.user, data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Paper submitted successfully!")

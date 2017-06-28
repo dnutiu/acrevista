@@ -5,7 +5,23 @@
     <div class="page-header">
         <h1>Submit a paper</h1>
     </div>
-    <form action="{% url 'journal_submit' %}" method="POST" enctype="multipart/form-data">
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <form action="{% url 'journal_submit' %}" method="POST" enctype=multipart/form-data>
         {{ form.as_p }}
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">Submit</button>
