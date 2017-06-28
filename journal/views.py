@@ -3,6 +3,7 @@
 
 """
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .forms import SubmitPaperForm
 
@@ -12,6 +13,7 @@ def homepage(request):
     return render(request, "journal/index.html", {'section': 'journal'})
 
 
+@login_required
 def submit_paper(request):
     if request.method == 'POST':
         form = SubmitPaperForm(data=request.POST, files=request.FILES)

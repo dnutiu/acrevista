@@ -24,6 +24,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('account.urls')),
     url(r'^journal/', include('journal.urls')),
-    # Not suitable for production.
+    # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
 ]
