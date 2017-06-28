@@ -10,9 +10,7 @@ class Profile(models.Model):
         ('Miss', 'Miss'),
         ('Mr', 'Mr'),
         ('Mrs', 'Mrs'),
-        ('Ms', 'Ms'),
-        ('Reverend', 'Reverend'),
-        ('Sir', 'Sir'),
+        ('Ms', 'Ms')
     )
     # There are packages for this but, meh.
     COUNTRY_CHOICES = (

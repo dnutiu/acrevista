@@ -30,6 +30,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='title',
-            field=models.CharField(choices=[('Dr', 'Dr'), ('Professor', 'Professor'), ('Miss', 'Miss'), ('Mr', 'Mr'), ('Mrs', 'Mrs'), ('Ms', 'Ms'), ('Reverend', 'Reverend'), ('Sir', 'Sir')], default=('Dr', 'Dr'), max_length=64),
+            field=models.CharField(choices=[('Dr', 'Dr'), ('Professor', 'Professor'), ('Miss', 'Miss'), ('Mr', 'Mr'), ('Mrs', 'Mrs'), ('Ms', 'Ms')], default=('Dr', 'Dr'), max_length=64),
         ),
     ]
