@@ -7,7 +7,6 @@ from django.shortcuts import render
 from .forms import SubmitPaperForm
 
 
-# TODO: PROFILE, HISTORY, REVIEW PAGES
 # Homepage of the Journal
 def homepage(request):
     return render(request, "journal/index.html", {'section': 'journal'})
@@ -26,3 +25,15 @@ def submit_paper(request):
     else:
         form = SubmitPaperForm()
     return render(request, "journal/submit.html", {'section': 'journal', 'form': form})
+
+
+def profile(request):
+    return render(request, 'journal/profile.html', {'section': 'journal'})
+
+
+def history(request):
+    return render(request, 'journal/history.html', {'section': 'journal'})
+
+
+def review(request):
+    return render(request, 'journal/review.html', {'section': 'journal'})

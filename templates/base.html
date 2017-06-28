@@ -39,12 +39,12 @@
                        aria-expanded="true">Journal <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'journal_home' %}">Home</a></li>
-                        <li><a href="#">Another action</a></li>
+                        <li><a href="{% url 'journal_history' %}">History</a></li>
+                        <li><a href="{% url 'journal_profile' %}">Profile</a></li>
+                        <li><a href="{% url 'journal_review' %}">Review</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">Paper Submissions</li>
                         <li><a href="{% url 'journal_submit' %}">Submit a paper</a></li>
-{#                                                <li><a href="#">Separated link</a></li>#}
-                        {#                        <li><a href="#">One more separated link</a></li>#}
                     </ul>
                 </li>
                 <li{% if section == 'issues' %} class="active"{% endif %}><a href="#">Issues</a></li>

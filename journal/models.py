@@ -10,5 +10,5 @@ def user_directory_path(instance, filename):
 class Paper(models.Model):
     user = models.ForeignKey(User, related_name='papers')
     title = models.CharField(max_length=64, blank=False)
-    description = models.TextField(max_length=500, blank=False)
+    description = models.TextField(max_length=2000, blank=False)
     file = models.FileField(upload_to=user_directory_path, blank=False)
