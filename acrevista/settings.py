@@ -79,7 +79,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
-    'account'
+    'account',
+    'journal',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -179,3 +180,6 @@ STATICFILES_DIRS = (
 
 # RUN: python manage.py collectstatic before
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# Media root for uploads:
+MEDIA_ROOT = 'uploads'
