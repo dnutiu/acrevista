@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% block title %}Submit a paper{% endblock %}
 
 {% block content %}
@@ -21,10 +22,25 @@
             </div>
         {% endfor %}
     {% endif %}
-    <form action="{% url 'journal_submit' %}" method="POST" enctype="multipart/form-data">
-        {{ form.as_p }}
+    <form action="{% url 'journal_submit' %}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Title</label>
+            {% render_field form.title class="form-control" id="title" placeholder="Title" %}
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            {% render_field form.description class="form-control" id="description" placeholder="Describe your paper" %}
+        </div>
+        <div class="form-group">
+            <label for="file">File</label>
+            {% render_field form.file  id="file" %}
+        </div>
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="row">
+            <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
     </form>
     <hr>
 {% endblock %}
