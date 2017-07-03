@@ -4,4 +4,9 @@
 
 This application was written for **Python 3**.
 
-More to be added.
+Requirements
+============
+```
+pip install -r requirements.txt
+sudo apt-get install libmagic-dev 
+```
