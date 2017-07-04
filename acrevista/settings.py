@@ -178,7 +178,8 @@ STATICFILES_DIRS = (
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 
-# RUN: python manage.py collectstatic before
+# RUN: python manage.py collectstatic before.
+# This line may generate a 500 error. Careful when setting DEBUG = False
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Media root for uploads:

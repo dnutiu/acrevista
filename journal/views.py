@@ -17,6 +17,10 @@ def homepage(request):
 def submit_paper(request):
     if request.method == 'POST':
         form = SubmitPaperForm(data=request.POST, files=request.FILES)
+        fns = request.POST.getlist('authors_first_name')
+        lns = request.POST.getlist('authors_last_name')
+        ems = request.POST.getlist('authors_email')
+        print(fns, lns, ems)
         if form.is_valid():
             paper = form.save(commit=False)
             paper.user = request.user

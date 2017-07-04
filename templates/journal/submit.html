@@ -5,6 +5,7 @@
 {% block content %}
     <div class="page-header">
         <h1>Submit a paper</h1>
+        <p>You will be selected as the corresponding author.</p>
     </div>
     {% if form.errors %}
         {% for field in form %}
@@ -28,19 +29,79 @@
             {% render_field form.title class="form-control" id="title" placeholder="Title" %}
         </div>
         <div class="form-group">
-            <label for="description">Description</label>
+            <label for="description">Abstract</label>
             {% render_field form.description class="form-control" id="description" placeholder="Describe your paper" %}
         </div>
+        <legend>Authors</legend>
+        <div class="form-group" id="author_row">
+            <div class="author_row row">
+                <div class="col-lg-4">
+                    <label>First Name</label>
+                    <input type="text" class="form-control" name="authors_first_name" required="required">
+                </div>
+                <div class="col-lg-4">
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" name="authors_last_name" required="required">
+                </div>
+                <div class="col-lg-4">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="authors_email" required="required">
+                </div>
+            </div>
+            <div class="row pull-right">
+                <br>
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <button type="button" id="remove_author" class="btn btn-default">Delete Author</button>
+                    <button type="button" id="add_author" class="btn btn-default">Add Author</button>
+                </div>
+            </div>
+        </div>
+        <legend>Files</legend>
         <div class="form-group">
-            <label for="file">File</label>
-            {% render_field form.file  id="file" %}
+            <div class="row">
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                    <label for="file">Manuscript</label>
+                    {% render_field form.manuscript class="form-control-static" id="file" %}
+                </div>
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                    <label for="cover-letter">Cover Letter</label>
+                    {% render_field form.cover_letter class="form-control-static" id="cover-letter" %}
+                </div>
+                <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
+                    <label for="supplementary">Supplementary Materials</label>
+                    {% render_field form.supplementary_materials class="form-control-static" id="supplementary" %}
+                </div>
+            </div>
         </div>
         {% csrf_token %}
         <div class="row">
-            <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="form-control-static">
+                <div class="col-xs-6 col-md-6 col-sm-6 col-lg-6">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
             </div>
         </div>
     </form>
     <hr>
+    <script>
+        function removeAuthor() {
+            var children = document.getElementsByClassName('author_row');
+            if (children.length > 1) {
+                document.getElementById('author_row').removeChild(children[0]);
+            }
+        }
+        function addAuthor() {
+            var authorRow = document.getElementsByClassName('author_row')[0];
+            document.getElementById('author_row').insertBefore(authorRow.cloneNode(true), authorRow);
+        }
+        (function () {
+            // add event listener
+            document.getElementById('add_author').addEventListener('click', function () {
+               addAuthor();
+            });
+            document.getElementById('remove_author').addEventListener('click', function () {
+               removeAuthor();
+            });
+        })();
+    </script>
 {% endblock %}
