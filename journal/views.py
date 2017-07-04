@@ -8,7 +8,6 @@ from django.shortcuts import render
 from .forms import SubmitPaperForm
 from .validators import validate_authors
 
-
 # Homepage of the Journal
 def homepage(request):
     return render(request, "journal/index.html", {'section': 'journal'})
@@ -26,7 +25,12 @@ def submit_paper(request):
         if form.is_valid() and validate_authors(*authors):
             paper = form.save(commit=False)
             paper.user = request.user
-            # TODO: CREATE FUNCTION THAT GETS A PAPER AND ADDS AUTHORS TO IT.
+
+            # Add authors to the text area
+            data = list(zip(*authors))
+            for author in data:
+                paper.authors += str(author) + "\n"
+
             paper.save()
             messages.success(request, "Paper submitted successfully!")
         else:

@@ -33,3 +33,4 @@ class Paper(models.Model):
     cover_letter = models.FileField(upload_to=user_id_path, blank=False, validators=[validate_file])
     supplementary_materials = models.FileField(upload_to=user_id_path, null=True, default=None,
                                                validators=[validate_file])
+    authors = models.TextField(max_length=4096)

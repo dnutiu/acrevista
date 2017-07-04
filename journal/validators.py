@@ -11,7 +11,7 @@ def validate_authors(*args):
         # Validate the length of each row to be the same.
         len_check = len(args[0])
         for el in args:
-            if len(el) != len_check:
+            if len(el) != len_check and len(el) < 255:  # 255 is the max value from Author model.
                 return False
         return True
     return False
