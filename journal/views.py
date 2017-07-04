@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .forms import SubmitPaperForm
+from .validators import validate_authors
 
 
 # Homepage of the Journal
@@ -17,13 +18,15 @@ def homepage(request):
 def submit_paper(request):
     if request.method == 'POST':
         form = SubmitPaperForm(data=request.POST, files=request.FILES)
-        fns = request.POST.getlist('authors_first_name')
-        lns = request.POST.getlist('authors_last_name')
-        ems = request.POST.getlist('authors_email')
-        print(fns, lns, ems)
-        if form.is_valid():
+        # Construct Author objects.
+        authors = [request.POST.getlist('authors_first_name'), request.POST.getlist('authors_last_name'),
+                   request.POST.getlist('authors_email'), request.POST.getlist('authors_affiliation'),
+                   request.POST.getlist('authors_country')]
+
+        if form.is_valid() and validate_authors(*authors):
             paper = form.save(commit=False)
             paper.user = request.user
+            # TODO: CREATE FUNCTION THAT GETS A PAPER AND ADDS AUTHORS TO IT.
             paper.save()
             messages.success(request, "Paper submitted successfully!")
         else:

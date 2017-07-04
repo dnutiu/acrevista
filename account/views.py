@@ -74,7 +74,6 @@ def register(request):
     elif request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
-            cd = user_form.cleaned_data
             # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
             # Set the chosen password

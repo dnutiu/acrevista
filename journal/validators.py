@@ -4,11 +4,24 @@ from django.core.exceptions import ValidationError
 import magic
 
 
+# This validator is used by the submit_paper view to validate the length of the author fields.
+# In case the user removes a field via inspect element.
+def validate_authors(*args):
+    if len(args) > 0:
+        # Validate the length of each row to be the same.
+        len_check = len(args[0])
+        for el in args:
+            if len(el) != len_check:
+                return False
+        return True
+    return False
+
+
 @deconstructible
 class FileValidator(object):
     error_messages = {
-        'max_size': ("Ensure this file size is not greater than %(max_size)s. Your file size is %(size)s."),
-        'min_size': ("Ensure this file size is not less than %(min_size)s. Your file size is %(size)s."),
+        'max_size': "Ensure this file size is not greater than %(max_size)s. Your file size is %(size)s.",
+        'min_size': "Ensure this file size is not less than %(min_size)s. Your file size is %(size)s.",
         'content_type': "Files of type %(content_type)s are not supported.",
     }
 

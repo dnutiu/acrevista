@@ -35,17 +35,25 @@
         <legend>Authors</legend>
         <div class="form-group" id="author_row">
             <div class="author_row row">
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <label>First Name</label>
                     <input type="text" class="form-control" name="authors_first_name" required="required">
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <label>Last Name</label>
                     <input type="text" class="form-control" name="authors_last_name" required="required">
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-2">
                     <label>Email</label>
                     <input type="email" class="form-control" name="authors_email" required="required">
+                </div>
+                <div class="col-lg-2">
+                    <label>Affiliation</label>
+                    <input type="text" class="form-control" name="authors_affiliation" required="required">
+                </div>
+                <div class="col-lg-2">
+                    <label>Country</label>
+                    <input type="text" class="form-control" name="authors_country" required="required">
                 </div>
             </div>
             <div class="row pull-right">
@@ -90,17 +98,18 @@
                 document.getElementById('author_row').removeChild(children[0]);
             }
         }
-        function addAuthor() {
-            var authorRow = document.getElementsByClassName('author_row')[0];
-            document.getElementById('author_row').insertBefore(authorRow.cloneNode(true), authorRow);
+        function addAuthor(authorRow) {
+            refference = document.getElementsByClassName('author_row')[0];
+            document.getElementById('author_row').insertBefore(authorRow.cloneNode(true), refference);
         }
         (function () {
+            var authorRow = document.getElementsByClassName('author_row')[0].cloneNode(true);
             // add event listener
             document.getElementById('add_author').addEventListener('click', function () {
-               addAuthor();
+                addAuthor(authorRow);
             });
             document.getElementById('remove_author').addEventListener('click', function () {
-               removeAuthor();
+                removeAuthor();
             });
         })();
     </script>
