@@ -8,6 +8,7 @@ from django.shortcuts import render
 from .forms import SubmitPaperForm
 from .validators import validate_authors
 
+
 # Homepage of the Journal
 def homepage(request):
     return render(request, "journal/index.html", {'section': 'journal'})
@@ -33,6 +34,7 @@ def submit_paper(request):
 
             paper.save()
             messages.success(request, "Paper submitted successfully!")
+            return render(request, "journal/submit_done.html", {'section': 'journal', 'paper': paper})
         else:
             messages.warning(request, "Error submitting paper!")
     else:
@@ -50,3 +52,6 @@ def history(request):
 
 def review(request):
     return render(request, 'journal/review.html', {'section': 'journal'})
+
+# TODO: Make my submitted papers on account dashboard
+# TODO: Add fields for user and reviwer.
