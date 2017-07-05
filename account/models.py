@@ -206,9 +206,9 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    title = models.CharField(max_length=64, choices=TITLE_CHOICES, default=TITLE_CHOICES[0])
+    title = models.CharField(max_length=64, choices=TITLE_CHOICES, default='Dr')
     phone = models.CharField(max_length=64, default='')
-    country = models.CharField(max_length=64, choices=COUNTRY_CHOICES, default=COUNTRY_CHOICES[0])
+    country = models.CharField(max_length=64, choices=COUNTRY_CHOICES, default='Romania')
     affiliation = models.CharField(max_length=64, default='')
 
     def __srt__(self):
