@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from account.forms import LoginForm
 from .models import Profile
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
+from journal import models as journal_models
 
 
 def change_personal_details(request):
@@ -42,7 +43,9 @@ def change_email(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'account/dashboard.html', {'section': 'account'})
+    # Get all papers submitted by the user.
+    papers = journal_models.Paper.objects.filter(user=request.user)
+    return render(request, 'account/dashboard.html', {'section': 'account', 'papers': papers})
 
 
 # Login the user.
@@ -54,6 +57,7 @@ def user_login(request):
         if form.is_valid():
             cd = form.cleaned_data
             user = authenticate(username=cd['username'], password=cd['password'])
+            # If the user exists and it is active, login, else error.
             if user is not None:
                 if user.is_active:
                     login(request, user)

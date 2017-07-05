@@ -53,5 +53,9 @@ def history(request):
 def review(request):
     return render(request, 'journal/review.html', {'section': 'journal'})
 
-# TODO: Make my submitted papers on account dashboard
+
+def details(request):
+    # TODO: Finish implementaion
+    return render(request, 'journal/review.html', {'section': 'journal'})
+
 # TODO: Add fields for user and reviwer.
