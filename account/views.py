@@ -74,7 +74,7 @@ def user_login(request):
 # Will register a user an create a profile for it.
 def register(request):
     if request.user.is_authenticated():
-        return redirect('dashboard')
+        return redirect('account:dashboard')
     elif request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
