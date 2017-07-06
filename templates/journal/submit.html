@@ -34,14 +34,23 @@
         </div>
         <legend>Authors</legend>
         <div class="form-group" id="author_row">
+            <div class="row pull-right">
+                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+                    <button type="button" id="remove_author" class="btn btn-default">Delete Author</button>
+                    <button type="button" id="add_author" class="btn btn-default">Add Author</button>
+                </div>
+            </div>
+            <div class="row"></div>
             <div class="author_row row">
                 <div class="col-lg-3">
                     <label>First Name</label>
-                    <input type="text" class="form-control" maxlength="255" name="authors_first_name" required="required">
+                    <input type="text" class="form-control" maxlength="255" name="authors_first_name"
+                           required="required">
                 </div>
                 <div class="col-lg-3">
                     <label>Last Name</label>
-                    <input type="text" class="form-control" maxlength="255" name="authors_last_name" required="required">
+                    <input type="text" class="form-control" maxlength="255" name="authors_last_name"
+                           required="required">
                 </div>
                 <div class="col-lg-2">
                     <label>Email</label>
@@ -49,20 +58,14 @@
                 </div>
                 <div class="col-lg-2">
                     <label>Affiliation</label>
-                    <input type="text" class="form-control" maxlength="255" name="authors_affiliation" required="required">
+                    <input type="text" class="form-control" maxlength="255" name="authors_affiliation"
+                           required="required">
                 </div>
                 <div class="col-lg-2">
                     <label>Country</label>
                     <input type="text" class="form-control" maxlength="255" name="authors_country" required="required">
                 </div>
                 <hr class="visible-xs visible-sm">
-            </div>
-            <div class="row pull-right">
-                <br>
-                <div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
-                    <button type="button" id="remove_author" class="btn btn-default">Delete Author</button>
-                    <button type="button" id="add_author" class="btn btn-default">Add Author</button>
-                </div>
             </div>
         </div>
         <legend>Files</legend>
@@ -96,12 +99,12 @@
         function removeAuthor() {
             var children = document.getElementsByClassName('author_row');
             if (children.length > 1) {
-                document.getElementById('author_row').removeChild(children[0]);
+                document.getElementById('author_row').removeChild(children[children.length-1]);
             }
         }
         function addAuthor(authorRow) {
-            var refference = document.getElementsByClassName('author_row')[0];
-            document.getElementById('author_row').insertBefore(authorRow.cloneNode(true), refference);
+            var refference = document.getElementById('author_row');
+            document.getElementById('author_row').insertBefore(authorRow.cloneNode(true), refference.lastChild);
         }
         (function () {
             var authorRow = document.getElementsByClassName('author_row')[0].cloneNode(true);
