@@ -45,7 +45,7 @@ class Paper(models.Model):
         ordering = ('-created',)
 
     def get_absolute_url(self):
-        return reverse('journal.views.details', args=[str(self.id)])
+        return reverse('journal:paper_detail', args=[str(self.id)])
 
     def __str__(self):
         return self.title

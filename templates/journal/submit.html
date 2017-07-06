@@ -23,7 +23,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    <form action="{% url 'journal_submit' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'journal:journal_submit' %}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Title</label>
             {% render_field form.title class="form-control" id="title" placeholder="Title" %}

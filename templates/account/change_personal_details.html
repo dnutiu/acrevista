@@ -20,7 +20,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    <form action="{% url 'personal_details' %}" method="post">
+    <form action="{% url 'account:personal_details' %}" method="post">
         <legend>Your name</legend>
         <div class="form-group">
             <label for="first-name">First Name</label>

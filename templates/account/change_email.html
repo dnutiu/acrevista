@@ -19,7 +19,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    <form action="{% url 'email_change' %}" method="post" class="form-horizontal">
+    <form action="{% url 'account:email_change' %}" method="post" class="form-horizontal">
         <fieldset>
             <div class="form-group">
                 <label for="old-email" class="col-lg-2 control-label">Old Email</label>

@@ -7,7 +7,7 @@
         <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
         <hr>
     </div>
-    <p>You can submit a new paper under the Journal, <a href="{% url 'journal_submit' %}">submit</a> option.</p>
+    <p>You can submit a new paper under the Journal, <a href="{% url 'journal:journal_submit' %}">submit</a> option.</p>
 
     <div class="panel panel-default">
         <div class="panel-heading"><span class="glyphicon glyphicon-globe"></span> Your submitted papers</div>
@@ -29,7 +29,7 @@
                     <tbody>
                     {% for paper in papers %}
                         <tr>
-                            <td>{{ paper.title|truncatechars:30 }}</td>
+                            <td><a href="{{ paper.get_absolute_url }}">{{ paper.title|truncatechars:30 }}</a></td>
                             <td>{{ paper.get_status_display }}</td>
                             <td>
                                 {% if paper.manuscript %}

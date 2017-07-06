@@ -51,7 +51,7 @@ def dashboard(request):
 # Login the user.
 def user_login(request):
     if request.user.is_authenticated():
-        return redirect('dashboard')
+        return redirect('account:dashboard')
     elif request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -61,7 +61,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect('dashboard')
+                    return redirect('account:dashboard')
                 else:
                     return render(request, 'account/login.html', {'form': form, 'error': 'Disabled account'})
             else:

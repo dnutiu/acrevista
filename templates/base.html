@@ -26,45 +26,45 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'journal_home' %}">AC Journal</a>
+            <a class="navbar-brand" href="{% url 'journal:journal_home' %}">AC Journal</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'dashboard' %}">Account</a>
+                <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'account:dashboard' %}">Account</a>
                 </li>
                 <li class="dropdown {% if section == 'journal' %}active{% endif %}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="true">Journal <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'journal_home' %}">Home</a></li>
-                        <li><a href="{% url 'journal_history' %}">History</a></li>
-                        <li><a href="{% url 'journal_profile' %}">Profile</a></li>
-                        <li><a href="{% url 'journal_review' %}">Review</a></li>
+                        <li><a href="{% url 'journal:journal_home' %}">Home</a></li>
+                        <li><a href="{% url 'journal:journal_history' %}">History</a></li>
+                        <li><a href="{% url 'journal:journal_profile' %}">Profile</a></li>
+                        <li><a href="{% url 'journal:journal_review' %}">Review</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">Paper Submissions</li>
-                        <li><a href="{% url 'journal_submit' %}">Submit a paper</a></li>
+                        <li><a href="{% url 'journal:journal_submit' %}">Submit a paper</a></li>
                     </ul>
                 </li>
                 <li{% if section == 'issues' %} class="active"{% endif %}><a href="#">Issues</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if not user.is_authenticated %}
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                    <li><a href="{% url 'register' %}">Register</a></li> {# TODO: Make modals :D #}
+                    <li><a href="{% url 'account:login' %}">Login</a></li>
+                    <li><a href="{% url 'account:register' %}">Register</a></li> {# TODO: Make modals :D #}
                 {% else %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{% url 'personal_details' %}">Edit Personal Details</a></li>
-                            <li><a href="{% url 'password_change' %}">Change Password</a></li>
-                            <li><a href="{% url 'email_change' %}">Change Email</a></li>
+                            <li><a href="{% url 'account:personal_details' %}">Edit Personal Details</a></li>
+                            <li><a href="{% url 'account:password_change' %}">Change Password</a></li>
+                            <li><a href="{% url 'account:email_change' %}">Change Email</a></li>
                             <li><a href="mailto:nutiudenis@hotmail.com,alext@cs.upt.ro,mudrescu@cs.upt.ro">Feedback</a>
                             </li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                            <li><a href="{% url 'account:logout' %}">Logout</a></li>
                         </ul>
                     </li>
                 {% endif %}

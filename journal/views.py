@@ -4,9 +4,10 @@
 """
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .forms import SubmitPaperForm
 from .validators import validate_authors
+from .models import Paper
 
 
 # Homepage of the Journal
@@ -54,8 +55,9 @@ def review(request):
     return render(request, 'journal/review.html', {'section': 'journal'})
 
 
-def details(request):
-    # TODO: Finish implementaion
-    return render(request, 'journal/review.html', {'section': 'journal'})
+@login_required
+def paper_detail(request, paper_id):
+    paper = get_object_or_404(Paper, id=paper_id)
+    return render(request, 'journal/paper_detail.html', {'section': 'journal', 'paper': paper})
 
 # TODO: Add fields for user and reviwer.
