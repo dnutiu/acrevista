@@ -25,11 +25,11 @@
     {% endif %}
     <form action="{% url 'journal:journal_submit' %}" method="post" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="title">Title</label>
+            <label for="title">Title (required)</label>
             {% render_field form.title class="form-control" id="title" placeholder="Title" %}
         </div>
         <div class="form-group">
-            <label for="description">Abstract</label>
+            <label for="description">Abstract (required)</label>
             {% render_field form.description class="form-control" id="description" placeholder="Describe your paper" %}
         </div>
         <legend>Authors</legend>
@@ -79,15 +79,15 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
-                    <label for="file">Manuscript</label>
+                    <label for="file">Manuscript (required)</label>
                     {% render_field form.manuscript class="form-control-static" id="file" %}
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
-                    <label for="cover-letter">Cover Letter</label>
+                    <label for="cover-letter">Cover Letter (required)</label>
                     {% render_field form.cover_letter class="form-control-static" id="cover-letter" %}
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-4 col-xs-12">
-                    <label for="supplementary">Supplementary Materials</label>
+                    <label for="supplementary">Supplementary Materials (optional)</label>
                     {% render_field form.supplementary_materials class="form-control-static" id="supplementary" %}
                 </div>
             </div>
