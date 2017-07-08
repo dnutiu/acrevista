@@ -26,8 +26,10 @@ class Paper(models.Model):
     )
     user = models.ForeignKey(User, related_name='papers')
     title = models.CharField(max_length=64, blank=False)
-    description = models.TextField(max_length=2000, blank=False)
-    authors = models.TextField(max_length=4096)
+    description = models.TextField(max_length=2000, blank=False, help_text="Represents the abstract of the paper.")
+    authors = models.TextField(max_length=4096,
+                               help_text="Each row represents an author that follows this template: (First Name, "
+                                         "Last Name, Email, Affiliation, Country, Corresponding Author)")
     created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='processing')
     # File validator.

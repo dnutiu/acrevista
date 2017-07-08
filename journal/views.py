@@ -22,7 +22,7 @@ def submit_paper(request):
         # Construct Author objects.
         authors = [request.POST.getlist('authors_first_name'), request.POST.getlist('authors_last_name'),
                    request.POST.getlist('authors_email'), request.POST.getlist('authors_affiliation'),
-                   request.POST.getlist('authors_country')]
+                   request.POST.getlist('authors_country'), request.POST.getlist('authors_corresponding')]
 
         if form.is_valid() and validate_authors(*authors):
             paper = form.save(commit=False)

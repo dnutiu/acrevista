@@ -65,6 +65,13 @@
                     <label>Country</label>
                     <input type="text" class="form-control" maxlength="255" name="authors_country" required="required">
                 </div>
+                <div class="col-lg-2 col-md-2">
+                    <label>Corresponding Author</label>
+                    <select name="authors_corresponding" class="form-control">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
                 <hr class="visible-xs visible-sm">
             </div>
         </div>
@@ -99,7 +106,7 @@
         function removeAuthor() {
             var children = document.getElementsByClassName('author_row');
             if (children.length > 1) {
-                document.getElementById('author_row').removeChild(children[children.length-1]);
+                document.getElementById('author_row').removeChild(children[children.length - 1]);
             }
         }
         function addAuthor(authorRow) {
