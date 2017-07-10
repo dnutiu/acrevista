@@ -5,8 +5,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from .forms import SubmitPaperForm
+from .forms import SubmitPaperForm, ReviewForm
 from .validators import validate_authors
+from django.http import Http404
 from .models import Paper
 
 
@@ -58,6 +59,20 @@ def review(request):
 @login_required
 def paper_detail(request, paper_id):
     paper = get_object_or_404(Paper, id=paper_id)
-    return render(request, 'journal/paper_detail.html', {'section': 'journal', 'paper': paper})
+    reviews = paper.reviews.all()
+    can_review = request.user in paper.reviewers.all()
 
-# TODO: Add fields for user and reviwer.
+    # Raise 404 if we're looking at someone's else paper and we're not the author or reviewers
+    if not can_review and request.user != paper.user:
+        raise Http404
+
+    if request.method == 'POST':
+        # TODO: Validate form and use can_review. & Style review
+        review_form = ReviewForm()
+        print("Under implementation")
+    else:
+        review_form = ReviewForm()
+
+    return render(request, 'journal/paper_detail.html',
+                  {'section': 'journal', 'paper': paper, 'review_form': review_form, 'reviews': reviews,
+                   'can_review': can_review})

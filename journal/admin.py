@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Paper
+from .models import Paper, Review
 
 
 class PaperAdmin(admin.ModelAdmin):
@@ -24,4 +24,9 @@ class PaperAdmin(admin.ModelAdmin):
     cover_letter_link.short_description = 'Cover Letter'
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['user', 'paper', 'recommendation', 'appropriate', 'created']
+
+
 admin.site.register(Paper, PaperAdmin)
+admin.site.register(Review, ReviewAdmin)

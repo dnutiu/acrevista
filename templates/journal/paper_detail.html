@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}History{% endblock %}
+{% block title %}Paper: {{ paper.title }}{% endblock %}
 
 {% block content %}
     <div class="page-header">
@@ -7,10 +7,10 @@
     </div>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
-            <h2>Status: {{ paper.get_status_display }}</h2>
-            <h2>Abstract</h2>
+            <h3>Status: {{ paper.get_status_display }}</h3>
+            <h3>Abstract</h3>
             <p>{{ paper.description|capfirst }}</p>
-            <h2>Files:
+            <h3>Files:
                 {% if paper.manuscript %}
                     <a href="{{ paper.manuscript.url }}">Manuscript</a>
                 {% endif %}
@@ -22,61 +22,56 @@
                     ,
                     <a href="{{ paper.supplementary_materials.url }}">Supplementary Materials</a>
                 {% endif %}
-            </h2>
+            </h3>
             <h2>Reviews</h2>
+            {% if can_review %}
+                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#reviewModal">Add
+                    Review
+                </button>
+            {% endif %}
             <hr>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-            <div class="review text-justify">
-                <h4>Title: Thos is my review <span class="pull-right">Rating: -2</span></h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fermentum enim sit amet diam
-                    posuere,
-                    eu dignissim lorem blandit. Sed turpis ipsum, rhoncus non quam et, euismod lobortis neque. Duis
-                    rhoncus
-                    ultrices pellentesque. Sed feugiat auctor lobortis. Duis porttitor mauris in risus scelerisque, a
-                    interdum velit sollicitudin. Sed id urna in quam interdum commodo vel nec dolor. In sollicitudin
-                    velit
-                    non tortor varius fermentum. Sed iaculis molestie interdum. Vestibulum mollis nunc lorem, sit amet
-                    pellentesque purus eleifend ac. Aenean luctus cursus sem, et pretium turpis aliquet eu. Duis
-                    vulputate
-                    sapien a felis aliquet tincidunt. Nam efficitur, odio ut accumsan auctor, sapien nulla porttitor
-                    ante,
-                    id varius quam dolor vel massa. Cras at sapien sit amet dui aliquam elementum eget sed risus. Ut
-                    turpis
-                    nulla, lacinia nec metus non, pharetra sagittis lectus. Aliquam laoreet orci eget lorem efficitur,
-                    eget
-                    consectetur nisl aliquam. Ut venenatis erat nec arcu elementum egestas.
-                </p>
-                <h5>Reviewer: Demo</h5>
-                <hr>
-            </div>
-
-            <div class="review text-justify">
-                <h4>Title: Thos is my review <span class="pull-right">Rating: -2</span></h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas fermentum enim sit amet diam
-                    posuere,
-                    eu dignissim lorem blandit. Sed turpis ipsum, rhoncus non quam et, euismod lobortis neque. Duis
-                    rhoncus
-                    ultrices pellentesque. Sed feugiat auctor lobortis. Duis porttitor mauris in risus scelerisque, a
-                    interdum velit sollicitudin. Sed id urna in quam interdum commodo vel nec dolor. In sollicitudin
-                    velit
-                    non tortor varius fermentum. Sed iaculis molestie interdum. Vestibulum mollis nunc lorem, sit amet
-                    pellentesque purus eleifend ac. Aenean luctus cursus sem, et pretium turpis aliquet eu. Duis
-                    vulputate
-                    sapien a felis aliquet tincidunt. Nam efficitur, odio ut accumsan auctor, sapien nulla porttitor
-                    ante,
-                    id varius quam dolor vel massa. Cras at sapien sit amet dui aliquam elementum eget sed risus. Ut
-                    turpis
-                    nulla, lacinia nec metus non, pharetra sagittis lectus. Aliquam laoreet orci eget lorem efficitur,
-                    eget
-                    consectetur nisl aliquam. Ut venenatis erat nec arcu elementum egestas.
-                </p>
-                <h5>Reviewer: Demo</h5>
-                <hr>
-            </div>
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review text-justify">
+                        <h4>{{ review }} <span class="pull-right">Rating: {{ review.recommendation }}</span></h4>
+                        <p>
+                            {{ review.comment }}
+                        </p>
+                        {% if review.additional_file %}
+                            <p>Additional File: <a href="{{ review.additional_file.url }}">Download</a></p>
+                        {% endif %}
+                        <hr>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Nobody has reviewed this paper. Yer.x§</p>
+            {% endif %}
         </div>
     </div>
 
+    <div id="reviewModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add a new review</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action=".">
+                        {{ review_form.as_p }}
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}
