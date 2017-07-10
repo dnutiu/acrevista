@@ -5,7 +5,6 @@
 {% block content %}
     <div class="page-header">
         <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
-        <hr>
     </div>
     <p>You can submit a new paper under the Journal, <a href="{% url 'journal:journal_submit' %}">submit</a> option.</p>
 
