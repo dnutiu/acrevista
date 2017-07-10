@@ -45,7 +45,9 @@ def change_email(request):
 def dashboard(request):
     # Get all papers submitted by the user.
     papers = journal_models.Paper.objects.filter(user=request.user)
-    return render(request, 'account/dashboard.html', {'section': 'account', 'papers': papers})
+    review_papers = journal_models.Paper.objects.filter(reviewers=request.user, status='under_review')
+    return render(request, 'account/dashboard.html',
+                  {'section': 'account', 'papers': papers, 'review_papers': review_papers})
 
 
 # Login the user.

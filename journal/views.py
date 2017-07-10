@@ -59,13 +59,15 @@ def review(request):
 @login_required
 def paper_detail(request, paper_id):
     paper = get_object_or_404(Paper, id=paper_id)
-    reviews = paper.reviews.all()
     can_review = request.user in paper.reviewers.all()
 
     # Raise 404 if we're looking at someone's else paper and we're not the author or reviewers
     if not can_review and request.user != paper.user:
         raise Http404
 
+    reviews = paper.reviews.all()  # Grab all reviewers.
+
+    # If someone submits the form.
     if request.method == 'POST':
         # TODO: Validate form and use can_review. & Style review
         review_form = ReviewForm()
