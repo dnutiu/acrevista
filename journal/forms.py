@@ -12,6 +12,7 @@ class SubmitPaperForm(forms.ModelForm):
         fields = ('title', 'description', 'manuscript', 'cover_letter', 'supplementary_materials')
 
 class ReviewForm(forms.ModelForm):
+
     class Meta:
         model = Review
         fields = ('appropriate', 'recommendation', 'comment', 'confidential_comment', 'additional_file')

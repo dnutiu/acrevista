@@ -89,11 +89,11 @@ class Review(models.Model):
     paper = models.ForeignKey(Paper, related_name='reviews')
     created = models.DateTimeField(auto_now_add=True)
 
-    appropriate = models.CharField(max_length=64, blank=True, choices=APPROPRIATE_CHOICES, default=None)
-    recommendation = models.CharField(max_length=64, blank=True, choices=RECOMMENDATION_CHOICES, default=None)
+    appropriate = models.CharField(max_length=64, choices=APPROPRIATE_CHOICES, default=None)
+    recommendation = models.CharField(max_length=64, choices=RECOMMENDATION_CHOICES, default=None)
 
-    comment = models.TextField(max_length=32768, blank=True, help_text="This comment will be shown to the author.")
-    confidential_comment = models.TextField(max_length=32768, blank=True,
+    comment = models.TextField(max_length=32768, help_text="This comment will be shown to the author.")
+    confidential_comment = models.TextField(max_length=32768,
                                             help_text="This comment will not be shown to the author.")
 
     additional_file = models.FileField(upload_to=review_user_id_path, blank=True, validators=[validate_file])

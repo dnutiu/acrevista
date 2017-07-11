@@ -69,9 +69,15 @@ def paper_detail(request, paper_id):
 
     # If someone submits the form.
     if request.method == 'POST':
-        # TODO: Validate form and use can_review. & Style review
-        review_form = ReviewForm()
-        print("Under implementation")
+        review_form = ReviewForm(data=request.POST, files=request.FILES)
+        if review_form.is_valid() and can_review:
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.paper = paper
+            review.save()
+            messages.success(request, "Review posted!")
+        else:
+            messages.warning(request, "Error submitting review.")
     else:
         review_form = ReviewForm()
 
