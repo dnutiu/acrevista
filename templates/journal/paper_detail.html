@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% block title %}Paper: {{ paper.title }}{% endblock %}
 
 {% block content %}
@@ -95,7 +96,27 @@
                 {% endif %}
                 <form method="post" action="{% url 'journal:paper_detail' paper.id %}" enctype="multipart/form-data">
                     <div class="modal-body">
-                        {{ review_form.as_p }}
+                        <div class="form-group">
+                            <label for="appropriate">Subject appropriateness of the manuscript</label>
+                            {% render_field review_form.appropriate class="form-control" id="appropriate" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="recommendation">Recommendation</label>
+                            {% render_field review_form.recommendation class="form-control" id="recommendation" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="author_comments">Detail comments to the author</label>
+                            {% render_field review_form.comment rows=5 class="form-control" id="author_comments" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="confidential_comment">Confidential - This part will not be sent to the
+                                author</label>
+                            {% render_field review_form.confidential_comment rows=5 class="form-control" id="confidential_comment" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="file">Additional File</label>
+                            {% render_field review_form.additional_file class="form-control-static" id="file" %}
+                        </div>
                         {% csrf_token %}
                     </div>
                     <div class="modal-footer">
