@@ -4,7 +4,7 @@
 """
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .forms import SubmitPaperForm, ReviewForm
 from .validators import validate_authors
 from django.http import Http404
@@ -57,6 +57,35 @@ def review(request):
 
 
 @login_required
+def paper_review(request, paper_id):
+    paper = get_object_or_404(Paper, id=paper_id)
+    can_review = request.user in paper.reviewers.all()
+
+    # Raise 404 if we're looking at someone's else paper and we're not the author or reviewers
+    if not can_review and request.user != paper.user:
+        raise Http404
+
+    # If someone submits the form.
+    if request.method == 'POST':
+        review_form = ReviewForm(data=request.POST, files=request.FILES)
+        if review_form.is_valid() and can_review:
+            new_review = review_form.save(commit=False)
+            new_review.user = request.user
+            new_review.paper = paper
+            new_review.save()
+            messages.success(request, "Review posted!")
+            # Redirects automatically to paper detail.
+            return redirect(paper)
+        else:
+            messages.warning(request, "Error submitting review.")
+    else:
+        review_form = ReviewForm()
+
+    return render(request, 'journal/paper_review.html',
+                  {'section': 'journal', 'paper': paper, 'review_form': review_form})
+
+
+@login_required
 def paper_detail(request, paper_id):
     paper = get_object_or_404(Paper, id=paper_id)
     can_review = request.user in paper.reviewers.all()
@@ -67,20 +96,5 @@ def paper_detail(request, paper_id):
 
     reviews = paper.reviews.all()  # Grab all reviewers.
 
-    # If someone submits the form.
-    if request.method == 'POST':
-        review_form = ReviewForm(data=request.POST, files=request.FILES)
-        if review_form.is_valid() and can_review:
-            review = review_form.save(commit=False)
-            review.user = request.user
-            review.paper = paper
-            review.save()
-            messages.success(request, "Review posted!")
-        else:
-            messages.warning(request, "Error submitting review.")
-    else:
-        review_form = ReviewForm()
-
     return render(request, 'journal/paper_detail.html',
-                  {'section': 'journal', 'paper': paper, 'review_form': review_form, 'reviews': reviews,
-                   'can_review': can_review})
+                  {'section': 'journal', 'paper': paper, 'reviews': reviews, 'can_review': can_review})

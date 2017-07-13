@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Review {{ paper.title }}{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Reviewing {{ paper.title|truncatechars:30 }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+            <h3>Status: {{ paper.get_status_display }}</h3>
+            <h3>Abstract</h3>
+            <p>{{ paper.description|capfirst }}</p>
+            <h3>Files:
+                {% if paper.manuscript %}
+                    <a href="{{ paper.manuscript.url }}">Manuscript</a>
+                {% endif %}
+                {% if paper.cover_letter %}
+                    ,
+                    <a href="{{ paper.cover_letter.url }}">Cover Letter</a>
+                {% endif %}
+                {% if paper.supplementary_materials %}
+                    ,
+                    <a href="{{ paper.supplementary_materials.url }}">Supplementary Materials</a>
+                {% endif %}
+            </h3>
+            <hr>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissable">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'journal:paper_review' paper.id %}"
+                  enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="appropriate">Subject appropriateness of the manuscript</label>
+                    {% render_field review_form.appropriate class="form-control" id="appropriate" %}
+                </div>
+                <div class="form-group">
+                    <label for="recommendation">Recommendation</label>
+                    {% render_field review_form.recommendation class="form-control" id="recommendation" %}
+                </div>
+                {% if user.is_staff %} {# Definetely needs more security... #}
+                    <div class="form-group">
+                        <label for="editor_review">Editor Review (The author will see this
+                            review)</label>
+                        {% render_field review_form.editor_review class="form-control-static" id="editor_review" %}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="author_comments">Detail comments to the author</label>
+                    {% render_field review_form.comment rows=5 class="form-control" id="author_comments" %}
+                </div>
+                <div class="form-group">
+                    <label for="confidential_comment">Confidential - This part will not be sent to the
+                        author</label>
+                    {% render_field review_form.confidential_comment rows=5 class="form-control" id="confidential_comment" %}
+                </div>
+                <div class="form-group">
+                    <label for="file">Additional File</label>
+                    {% render_field review_form.additional_file class="form-control-static" id="file" %}
+                </div>
+                {% csrf_token %}
+
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

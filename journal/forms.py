@@ -15,4 +15,4 @@ class ReviewForm(forms.ModelForm):
 
     class Meta:
         model = Review
-        fields = ('appropriate', 'recommendation', 'comment', 'confidential_comment', 'additional_file')
+        fields = ('appropriate', 'recommendation', 'editor_review' , 'comment', 'confidential_comment', 'additional_file')

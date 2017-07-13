@@ -26,9 +26,11 @@
             </h3>
             <h2>Reviews</h2>
             {% if can_review %}
-                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#reviewModal">Add
-                    Review
-                </button>
+                {# This was once used as a modal... good ol' times #}
+                {#                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#reviewModal">Add#}
+                {#                    Review#}
+                {#                </button>#}
+                <a href="{% url 'journal:paper_review' paper.id %}" target="_blank">Add a review</a>
             {% endif %}
             <hr>
         </div>
@@ -37,33 +39,42 @@
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
             {% if reviews %}
                 {% for review in reviews %}
-                    <div class="review text-justify">
-                        <h4>Review #{{ forloop.counter }} <span
-                                class="pull-right">Rating: {{ review.recommendation }}</span></h4>
-                        <p>
-                            {{ review.comment }}
-                        </p>
-                        {% if review.additional_file %}
-                            <p>Additional File: <a href="{{ review.additional_file.url }}">Download</a></p>
-                        {% endif %}
-                        {% if user.is_staff %}
-                            <div class="panel panel-info">
-                                <div class="panel-heading">
-                                    <h5>Confidential data</h5>
-                                </div>
-                                <div class="panel-body">
-                                    <h5>Reviewer: {{ review.user.first_name }} {{ review.user.last_name }}</h5>
-                                    <h5>Appropriateness: {{ review.appropriate }}</h5>
-                                    <h5>Confidential comment:</h5>
-                                    <p>
-                                        {{ review.confidential_comment }}
-                                    </p>
-                                </div>
-                            </div>
+                    {# Show the review only if the user is a staff member, the user wrote the review, the review is an editor review #}
+                    {% if review.editor_review or user.is_staff or user == review.user %}
+                        <div class="review text-justify">
+                            {% if review.editor_review %}
+                                <h4>Editor Review<span
+                                        class="pull-right">Rating: {{ review.recommendation }}</span></h4>
+                            {% else %}
+                                <h4>Review #{{ forloop.counter }} <span
+                                        class="pull-right">Rating: {{ review.recommendation }}</span></h4>
+                            {% endif %}
+                            <p>
+                                {{ review.comment }}
+                            </p>
+                            {% if review.additional_file %}
+                                <p>Additional File: <a href="{{ review.additional_file.url }}">Download</a></p>
+                            {% endif %}
 
-                        {% endif %}
-                        <hr>
-                    </div>
+                            {# Confidential data displayed only to the editor #}
+                            {% if user.is_staff %}
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h5>Confidential data</h5>
+                                    </div>
+                                    <div class="panel-body">
+                                        <h5>Reviewer: {{ review.user.first_name }} {{ review.user.last_name }}</h5>
+                                        <h5>Appropriateness: {{ review.appropriate }}</h5>
+                                        <h5>Confidential comment:</h5>
+                                        <p>
+                                            {{ review.confidential_comment }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <hr>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <p>Nobody has reviewed this paper. Yet.</p>
@@ -71,61 +82,67 @@
         </div>
     </div>
 
-    <div id="reviewModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add a new review</h4>
-                </div>
-                {% if form.errors %}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger alert-dismissable">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <div class="alert alert-danger alert-dismissable">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                <form method="post" action="{% url 'journal:paper_detail' paper.id %}" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="appropriate">Subject appropriateness of the manuscript</label>
-                            {% render_field review_form.appropriate class="form-control" id="appropriate" %}
-                        </div>
-                        <div class="form-group">
-                            <label for="recommendation">Recommendation</label>
-                            {% render_field review_form.recommendation class="form-control" id="recommendation" %}
-                        </div>
-                        <div class="form-group">
-                            <label for="author_comments">Detail comments to the author</label>
-                            {% render_field review_form.comment rows=5 class="form-control" id="author_comments" %}
-                        </div>
-                        <div class="form-group">
-                            <label for="confidential_comment">Confidential - This part will not be sent to the
-                                author</label>
-                            {% render_field review_form.confidential_comment rows=5 class="form-control" id="confidential_comment" %}
-                        </div>
-                        <div class="form-group">
-                            <label for="file">Additional File</label>
-                            {% render_field review_form.additional_file class="form-control-static" id="file" %}
-                        </div>
-                        {% csrf_token %}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
+    {# Moved in paper_review.html #}
+    {#    <div id="reviewModal" class="modal fade" role="dialog">#}
+    {#        <div class="modal-dialog">#}
+    {#            <div class="modal-content">#}
+    {#                <div class="modal-header">#}
+    {#                    <button type="button" class="close" data-dismiss="modal">&times;</button>#}
+    {#                    <h4 class="modal-title">Add a new review</h4>#}
+    {#                </div>#}
+    {#                {% if form.errors %}#}
+    {#                    {% for field in form %}#}
+    {#                        {% for error in field.errors %}#}
+    {#                            <div class="alert alert-danger alert-dismissable">#}
+    {#                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>#}
+    {#                                <strong>{{ field.name|escape }}: {{ error|escape }}</strong>#}
+    {#                            </div>#}
+    {#                        {% endfor %}#}
+    {#                    {% endfor %}#}
+    {#                    {% for error in form.non_field_errors %}#}
+    {#                        <div class="alert alert-danger alert-dismissable">#}
+    {#                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>#}
+    {#                            <strong>{{ field.name|escape }}: {{ error|escape }}</strong>#}
+    {#                        </div>#}
+    {#                    {% endfor %}#}
+    {#                {% endif %}#}
+    {#                <form method="post" action="{% url 'journal:paper_detail' paper.id %}" enctype="multipart/form-data">#}
+    {#                    <div class="modal-body">#}
+    {#                        <div class="form-group">#}
+    {#                            <label for="appropriate">Subject appropriateness of the manuscript</label>#}
+    {#                            {% render_field review_form.appropriate class="form-control" id="appropriate" %}#}
+    {#                        </div>#}
+    {#                        <div class="form-group">#}
+    {#                            <label for="recommendation">Recommendation</label>#}
+    {#                            {% render_field review_form.recommendation class="form-control" id="recommendation" %}#}
+    {#                        </div>#}
+    {#                        {% if user.is_staff %} {# Definetely needs more security... #}
+    {#                            <div class="form-group">#}
+    {#                                <label for="editor_review">Editor Review (The author will see this review)</label>#}
+    {#                                {% render_field review_form.editor_review class="form-control-static" id="editor_review" %}#}
+    {#                            </div>#}
+    {#                        {% endif %}#}
+    {#                        <div class="form-group">#}
+    {#                            <label for="author_comments">Detail comments to the author</label>#}
+    {#                            {% render_field review_form.comment rows=5 class="form-control" id="author_comments" %}#}
+    {#                        </div>#}
+    {#                        <div class="form-group">#}
+    {#                            <label for="confidential_comment">Confidential - This part will not be sent to the#}
+    {#                                author</label>#}
+    {#                            {% render_field review_form.confidential_comment rows=5 class="form-control" id="confidential_comment" %}#}
+    {#                        </div>#}
+    {#                        <div class="form-group">#}
+    {#                            <label for="file">Additional File</label>#}
+    {#                            {% render_field review_form.additional_file class="form-control-static" id="file" %}#}
+    {#                        </div>#}
+    {#                        {% csrf_token %}#}
+    {#                    </div>#}
+    {#                    <div class="modal-footer">#}
+    {#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+    {#                        <button type="submit" class="btn btn-primary">Submit</button>#}
+    {#                    </div>#}
+    {#                </form>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
 {% endblock %}

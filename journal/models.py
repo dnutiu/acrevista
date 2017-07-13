@@ -88,6 +88,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, related_name='reviews')  # The submitter
     paper = models.ForeignKey(Paper, related_name='reviews')
     created = models.DateTimeField(auto_now_add=True)
+    editor_review = models.BooleanField()
 
     appropriate = models.CharField(max_length=64, choices=APPROPRIATE_CHOICES, default=None)
     recommendation = models.CharField(max_length=64, choices=RECOMMENDATION_CHOICES, default=None)

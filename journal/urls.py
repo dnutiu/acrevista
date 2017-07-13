@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^profile/$', views.profile, name="journal_profile"),
     url(r'^review/$', views.review, name="journal_review"),
     url(r'^paper/(?P<paper_id>\d+)/detail$', views.paper_detail, name="paper_detail"),  # Also used when adding reviews.
+    url(r'^paper/(?P<paper_id>\d+)/review$', views.paper_review, name="paper_review"),
 ]
