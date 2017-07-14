@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from account.forms import LoginForm
 from .models import Profile
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
@@ -45,10 +46,17 @@ def change_email(request):
 def dashboard(request):
     # Get all papers submitted by the user.
     papers = journal_models.Paper.objects.filter(user=request.user)
-    review_papers = journal_models.Paper.objects.filter(reviewers=request.user, status='under_review')
-    # TODO: Add reviewed papers.
+    reviewed_papers = journal_models.Paper.objects.filter(reviewers=request.user)
+
+    # Papers that are under review and need a review
+    review_papers = reviewed_papers.filter(status='under_review')
+
+    # Don't list papers that are in Processing or Under Review
+    reviewed_papers = reviewed_papers.filter(~Q(status='processing'), ~Q(status='under_review'))
+
     return render(request, 'account/dashboard.html',
-                  {'section': 'account', 'papers': papers, 'review_papers': review_papers})
+                  {'section': 'account', 'papers': papers, 'review_papers': review_papers,
+                   'reviewed_papers': reviewed_papers})
 
 
 # Login the user.
