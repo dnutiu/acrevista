@@ -46,13 +46,14 @@ class Paper(models.Model):
         ('accepted', 'Accepted'),
     )
     user = models.ForeignKey(User, related_name='papers')
+    editor = models.ForeignKey(User, blank=True, null=True, related_name='editor_papers')
     title = models.CharField(max_length=64, blank=False)
     # Paper info
     description = models.TextField(max_length=2000, blank=False, help_text="Represents the abstract of the paper.")
     authors = models.TextField(max_length=4096,
                                help_text="Each row represents an author that follows this template: (First Name, "
                                          "Last Name, Email, Affiliation, Country, Corresponding Author)")
-    reviewers = models.ManyToManyField(User)
+    reviewers = models.ManyToManyField(User, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='processing')
     # Files

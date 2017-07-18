@@ -3,7 +3,7 @@ from .models import Paper, Review
 
 
 class PaperAdmin(admin.ModelAdmin):
-    list_display = ['title', 'user', 'file_link', 'cover_letter_link']
+    list_display = ['title', 'user', 'file_link', 'cover_letter_link', 'created']
     search_fields = ['title', 'user']
     # Add raw_id_fields = ('user',) if you want to be able to search for users.
 
