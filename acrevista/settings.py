@@ -71,6 +71,8 @@ LOGGING = {
 
 # Email Configuration for testing
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# The email address from where to no-reply emails are sent.
+EMAIL_NOREPLY = "noreply@acrevistatest.com"
 
 # Application definition
 

@@ -9,6 +9,7 @@ from .forms import SubmitPaperForm, ReviewForm
 from .validators import validate_authors
 from django.http import Http404
 from .models import Paper
+from .mail import send_mail_to_staff, send_mail_new_review
 
 
 # Homepage of the Journal
@@ -36,6 +37,9 @@ def submit_paper(request):
 
             paper.save()
             messages.success(request, "Paper submitted successfully!")
+
+            send_mail_to_staff(paper.title, paper.authors)
+
             return render(request, "journal/submit_done.html", {'section': 'journal', 'paper': paper})
         else:
             messages.warning(request, "Error submitting paper!")
@@ -75,6 +79,15 @@ def paper_review(request, paper_id):
             new_review.save()
             messages.success(request, "Review posted!")
             # Redirects automatically to paper detail.
+
+            # Notify editor or user that a new review has been added.
+            if new_review.editor_review:
+                if paper.user:
+                    send_mail_new_review(paper.title, paper.user.email)
+            else:
+                if paper.editor:
+                    send_mail_new_review(paper.title, paper.editor.email)
+
             return redirect(paper)
         else:
             messages.warning(request, "Error submitting review.")
