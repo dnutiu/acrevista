@@ -4,6 +4,8 @@ from .models import Paper, Review
 
 class PaperAdmin(admin.ModelAdmin):
     list_display = ['title', 'user', 'file_link', 'cover_letter_link']
+    search_fields = ['title', 'user']
+    # Add raw_id_fields = ('user',) if you want to be able to search for users.
 
     def file_link(self, obj):
         if obj.manuscript:
