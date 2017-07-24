@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from .validators import FileValidator
+from .mail import send_mail_paper_status_update
 
 
 # This function is used by the Paper model class.
@@ -67,6 +68,14 @@ class Paper(models.Model):
 
     def get_absolute_url(self):
         return reverse('journal:paper_detail', args=[str(self.id)])
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        """Override of the save method in order to send email notifications when the status of the paper chances."""
+        if self.pk is not None:
+            original = Paper.objects.get(pk=self.pk)
+            if original.status != self.status:
+                send_mail_paper_status_update(self.title, original.status, self.status)
+        super(Paper, self).save()
 
     def __str__(self):
         return self.title
