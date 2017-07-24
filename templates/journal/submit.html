@@ -296,6 +296,7 @@
     </form>
     <hr>
     <script>
+        {# Validates file extensions, used with onclick on form. #}
         var _validFileExtensions = [".pdf", ".html", ".doc", ".docx", ".txt"];
         function Validate(oForm) {
             var arrInputs = oForm.getElementsByTagName("input");
@@ -324,6 +325,7 @@
             return true;
         }
 
+        {# Code that handles add/remove authors from the form. #}
         function removeAuthor() {
             var children = document.getElementsByClassName('author_row');
             if (children.length > 1) {
