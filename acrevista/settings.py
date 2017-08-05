@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'account',
     'journal',
+    'issues',
 ]
 
 MIDDLEWARE_CLASSES = [
