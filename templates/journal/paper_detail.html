@@ -64,7 +64,7 @@
                                     </div>
                                     <div class="panel-body">
                                         <h5>Reviewer: {{ review.user.first_name }} {{ review.user.last_name }}</h5>
-                                        <h5>Appropriateness: {{ review.appropriate }}</h5>
+                                        <h5>Appropriateness: {{ review.get_appropriate_display }}</h5>
                                         <h5>Confidential comment:</h5>
                                         <p>
                                             {{ review.confidential_comment }}
