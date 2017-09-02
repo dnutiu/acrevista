@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     'menus',
     'treebeard',
     'sekizai',
+    'djangocms_text_ckeditor',
 
     # Used to ease working with forms.
     'widget_tweaks',

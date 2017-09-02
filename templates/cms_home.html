@@ -1,16 +1,14 @@
+{% extends 'base.html' %}
 {% load cms_tags sekizai_tags %}
-<html>
-<head>
-    <title>{% page_attribute "page_title" %}</title>
-    {% render_block "css" %}
-</head>
-<body>
-{% cms_toolbar %}
+
+{% block title %}{% page_attribute "page_title" %}{% endblock %}
+
+
+
 {% block content %}
+
     {% placeholder "feature" %}
     {% placeholder "content" %}
     {% placeholder "splashbox" %}
 {% endblock content %}
-{% render_block "js" %}
-</body>
-</html>
+
