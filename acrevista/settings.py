@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import dj_database_url
 
+# This project uses Django CMS
+# http://docs.django-cms.org/en/release-3.4.x/how_to/install.html#install-the-django-cms-package
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +28,18 @@ SECRET_KEY = '6c_*&r1n!#9s&5n*aeuc#uzim(%mf(gbpw2)*&ph03orh73o6='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Used by Django CMS
+SITE_ID = 1
+
+# The hosts where this website can be hosted.
+# SECURITY WARNING: Must be set when using for production!
 ALLOWED_HOSTS = ['*']
+
+# Language settings
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('ro', 'Romanian'),
+]
 
 # Logging
 LOGGING = {
@@ -77,13 +91,26 @@ EMAIL_NOREPLY = "noreply@acrevistatest.com"
 # Application definition
 
 INSTALLED_APPS = [
+    # Django default apps.
+    'djangocms_admin_style',  # Needed by Django CMS
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Django CMS required apps.
+    'django.contrib.sites',
+    'cms',
+    'menus',
+    'treebeard',
+    'sekizai',
+
+    # Used to ease working with forms.
     'widget_tweaks',
+
+    # Custom apps that power this website.
     'account',
     'journal',
     'issues',
@@ -98,7 +125,13 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # May needed to be removed.
+    'cms.middleware.utils.ApphookReloadMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'acrevista.urls'
@@ -110,6 +143,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'cms.context_processors.cms_settings',
+                'sekizai.context_processors.sekizai',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -117,6 +152,11 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+# Need by django CMS
+CMS_TEMPLATES = [
+    ('cms_home.html', 'Home page template'),
 ]
 
 WSGI_APPLICATION = 'acrevista.wsgi.application'

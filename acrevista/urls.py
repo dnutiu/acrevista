@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^issues/', include('issues.urls', namespace='issues', app_name='issues')),
     # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+    url(r'^', include('cms.urls')),
 ]
