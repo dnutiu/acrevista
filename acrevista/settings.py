@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import dj_database_url
 
+# TODO: Create apphook for issues. :D
 # This project uses Django CMS
 # http://docs.django-cms.org/en/release-3.4.x/how_to/install.html#install-the-django-cms-package
 
