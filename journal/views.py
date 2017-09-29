@@ -48,6 +48,10 @@ def submit_paper(request):
     return render(request, "journal/submit.html", {'section': 'journal', 'form': form})
 
 
+def guidelines(request):
+    return render(request, 'journal/guidelines.html', {'section': 'journal'})
+
+
 def profile(request):
     return render(request, 'journal/profile.html', {'section': 'journal'})
 

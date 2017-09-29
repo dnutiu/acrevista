@@ -34,34 +34,39 @@
             </button>
             <a class="navbar-brand" href="{% url 'journal:journal_home' %}">AC Journal</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
+        {# Navbar content #}
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                {# Account Dropdown Menu #}
                 <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'account:dashboard' %}">Account</a>
                 </li>
+                {# Jornal Dropdown Menu #}
                 <li class="dropdown {% if section == 'journal' %}active{% endif %}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="true">Journal <span class="caret"></span></a>
+
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'journal:journal_home' %}">Home</a></li>
                         <li><a href="{% url 'journal:journal_history' %}">History</a></li>
                         <li><a href="{% url 'journal:journal_profile' %}">Profile</a></li>
                         <li><a href="{% url 'journal:journal_review' %}">Review</a></li>
+                        <li><a href="{% url 'journal:journal_guidelines' %}">Submission Guidelines</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">Paper Submissions</li>
                         <li><a href="{% url 'journal:journal_submit' %}">Submit a paper</a></li>
                     </ul>
                 </li>
+                {# Issues Dropdown Menu #}
                 <li{% if section == 'issues' %} class="active"{% endif %}>
                     <a href="{% url 'issues:issues_home' %}">Issues</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if not user.is_authenticated %}
+                {% if not user.is_authenticated %} {# User is not authenticated #}
                     <li><a href="{% url 'account:login' %}">Login</a></li>
                     <li><a href="{% url 'account:register' %}">Register</a></li> {# TODO: Make modals :D #}
-                {% else %}
+
+                {% else %} {# User is authenticated #}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
@@ -75,7 +80,7 @@
                             <li><a href="{% url 'account:logout' %}">Logout</a></li>
                         </ul>
                     </li>
-                {% endif %}
+                {% endif %} {# End User is Authenticated #}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -83,6 +88,7 @@
 <div class="clearfix"></div>
 {# MAIN AREA #}
 <main class="container" role="main">
+    {# Messages that are passed here via Django views. #}
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissable">
@@ -91,10 +97,16 @@
             </div>
         {% endfor %}
     {% endif %}
+    {# End #}
+
+    {# Main Content Area #}
     {% block content %}
     {% endblock %}
+    {# End #}
 </main>
+
 <div class="clearfix"></div>
+
 {# FOOTER AREA #}
 <footer>
     <div class="container">
@@ -106,6 +118,7 @@
     </div>
 </footer>
 
+{# JavaScripts and what not #}
 <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
 {% render_block "js" %}
