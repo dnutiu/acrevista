@@ -1,4 +1,4 @@
-I.Requirements & Specifications
+I.Requirements 
 
 - The user can create an personalised user account to use with the website.
 - The used can submit papers, which will be reviewed by an reviewer.
@@ -9,3 +9,10 @@ I.Requirements & Specifications
 - The user can be a reviewer and also an editor.
 - The user can see a history of previous submitted papers and reviewed papers.
 - The reviewer can see papers which require review.
+
+II. Specifications
+
+Use Django as a web framework.
+Use DjangoCMS to manage issues
+Use Vue.JS on front-end when needed else vanilla js.
+
