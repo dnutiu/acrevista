@@ -13,6 +13,6 @@ I.Requirements
 II. Specifications
 
 Use Django as a web framework.
-Use DjangoCMS to manage issues
+Use DjangoCMS to manage some pages.
 Use Vue.JS on front-end when needed else vanilla js.
 
