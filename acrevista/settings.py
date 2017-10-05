@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import dj_database_url
 
-# TODO: Create apphook for issues. :D
 # This project uses Django CMS
 # http://docs.django-cms.org/en/release-3.4.x/how_to/install.html#install-the-django-cms-package
 
@@ -69,14 +68,10 @@ LOGGING = {
             'propagate': True,
             'level': 'DEBUG',
         },
-        'MYAPP': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-        },
     }
 }
 
-# Email Configuration
+### Email Configuration
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_HOST_USER = '***'
 # EMAIL_HOST_PASSWORD = '***'
@@ -86,11 +81,11 @@ LOGGING = {
 
 # Email Configuration for testing
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # The email address from where to no-reply emails are sent.
 EMAIL_NOREPLY = "noreply@acrevistatest.com"
 
 # Application definition
-
 INSTALLED_APPS = [
     # Django default apps.
     'djangocms_admin_style',  # Needed by Django CMS
@@ -215,9 +210,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
+
 # django.contrib.staticfiles provides a convenience management command for gathering static files in a
 # # single directory so you can serve them easily.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
