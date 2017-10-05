@@ -1,5 +1,12 @@
 from django.db import models
 from django.conf import settings
+from . import utilities
+
+# The LoginToken class provides password less login.
+class LoginToken(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    token = models.CharField(max_length=64, default=utilities.generate_security_token)
+    expiry_date = models.DateTimeField(default=utilities.days_from_current_time)
 
 
 # The Profile class extends Django's default user model.
