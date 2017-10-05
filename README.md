@@ -38,3 +38,18 @@ which are seen only by the editor.
 1. Go to admin
 2. Click PAPERS and the select the desired paper.
 3. Find 'REVIEWERS:' and highlight the users which you want to be reviewers. And finally save.
+
+--
+
+#### I.Requirements & Specifications (For Web Application Development Course 2017)
+
+- The user can create an personalised user account to use with the website.
+- The used can submit papers, which will be reviewed by an reviewer.
+- The editor, which is also an user, can assign reviewers.
+- The reviewer can add review to the paper.
+- The editor can add editorial review to the paper.
+- The editor can update the status of the paper. (Accept, reject) also change files associated with it.
+- The user can be a reviewer and also an editor.
+- The user can see a history of previous submitted papers and reviewed papers.
+- The reviewer can see papers which require review.
+
