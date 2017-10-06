@@ -4,6 +4,7 @@ This file will provide various utility functions.
 import base64
 import os
 import datetime
+from django.utils import timezone
 
 
 def generate_security_token(size=32):
@@ -24,4 +25,4 @@ def days_from_current_time(days=10):
     :param days: The number of days.
     :return: The computed date.
     """
-    return datetime.datetime.now() + datetime.timedelta(days=10)
+    return timezone.now() + datetime.timedelta(days=10)
