@@ -28,7 +28,6 @@ def generate_user_token(request):
         data["error"] = "No user id provided!"
 
     try:
-        # Set the paper id first.
         user = User.objects.filter(id=int(user_id))
 
         if not user:
