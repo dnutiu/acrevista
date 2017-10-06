@@ -1,5 +1,5 @@
 """
-This file will handle the emails from the account package.
+This file will implement useful methods for sending emails from withing this package.
 """
 from acrevista.settings import EMAIL_NOREPLY, BASE_URL, SITE_NAME
 from django.core.mail import send_mail
