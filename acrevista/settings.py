@@ -16,8 +16,14 @@ import dj_database_url
 # This project uses Django CMS
 # http://docs.django-cms.org/en/release-3.4.x/how_to/install.html#install-the-django-cms-package
 
+# Site Name
+SITE_NAME = "Novel Computation & Control"
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Set this to the base url!
+BASE_URL = "murmuring-woodland-34935.herokuapp.com"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/

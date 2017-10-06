@@ -1,12 +1,62 @@
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.utils import timezone
 from account.forms import LoginForm
-from .models import Profile
+from account.mail import send_token_email
+from .models import Profile, LoginToken
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def generate_user_token(request):
+    """
+    This function will generate a login token that expires in 10 days and it will assign it to a user.
+    It is retrieves the user_id and paper_id from the GET request.
+    """
+    user_id = request.GET.get("user_id", None)
+    data = {}
+
+    if user_id is None:
+        data["error"] = "No user id provided!"
+
+    try:
+        # Set the paper id first.
+        user = User.objects.filter(id=int(user_id))
+
+        if not user:
+            data["user_id"] = str(user_id)
+            data["error"] = "User not found!"
+        else:  # This is where we make the LoginToken.
+
+            # Delete the old token if any.
+            token = LoginToken.objects.filter(user=user[0])
+            if token:
+                token.delete()
+
+            # Create a new LoginToken
+            token = LoginToken()
+            token.user = user[0]
+            token.save()
+
+            # Notify the user that a token has been generated
+            send_token_email(token.user.email, token.token)
+
+            data['message'] = "Token was generated successfully!"
+    except ValueError as e:
+        data["error"] = str(e)
+    except TypeError as e:
+        data["error"] = str(e)
+    except Exception as e:
+        data["error"] = str(e)
+
+    return JsonResponse(data)
 
 
 def change_personal_details(request):
@@ -61,6 +111,22 @@ def dashboard(request):
 
 # Login the user.
 def user_login(request):
+    # Login the user automatically using the LoginToken
+    token = request.GET.get('token', None)
+    if token:
+        login_token = LoginToken.objects.filter(token=token)
+        if not login_token:  # We don't have any tokens in database.
+            messages.warning(request, "Invalid login token!")
+        else:
+            # Check if the token is still valid
+            if login_token[0].expiry_date < timezone.now():
+                messages.warning(request, "Token is expired!")
+            else:
+                # The login token is still valid, login the user!
+                messages.success(request, "You have been logged in successfully as {}!"
+                                 .format(str(login_token[0].user)))
+                login(request, login_token[0].user)
+
     if request.user.is_authenticated():
         return redirect('account:dashboard')
     elif request.method == 'POST':
