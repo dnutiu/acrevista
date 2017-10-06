@@ -19,6 +19,7 @@ def generate_user_token(request):
     """
     This function will generate a login token that expires in 10 days and it will assign it to a user.
     It is retrieves the user_id and paper_id from the GET request.
+    It also notifies the user via email that a token has been generated.
     """
     user_id = request.GET.get("user_id", None)
     data = {}
