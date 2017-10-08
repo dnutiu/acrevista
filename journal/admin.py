@@ -7,6 +7,7 @@ class PaperAdmin(admin.ModelAdmin):
     search_fields = ['title', 'user']
     # Add raw_id_fields = ('user',) if you want to be able to search for users.
 
+    @classmethod
     def file_link(self, obj):
         if obj.manuscript:
             return "<a href='{}' download>Download</a>".format(obj.manuscript.url)
@@ -16,6 +17,7 @@ class PaperAdmin(admin.ModelAdmin):
     file_link.allow_tags = True
     file_link.short_description = 'Manuscript'
 
+    @classmethod
     def cover_letter_link(self, obj):
         if obj.cover_letter:
             return "<a href='{}' download>Download</a>".format(obj.cover_letter.url)
