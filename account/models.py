@@ -3,6 +3,17 @@ from django.conf import settings
 from . import utilities
 
 
+class LoginToken(models.Model):
+    """
+     LoginToken class provides a way for password less login.
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    token = models.CharField(max_length=64, default=utilities.generate_security_token)
+    expiry_date = models.DateTimeField(default=utilities.days_from_current_time)
+
+    def _srt_(self):
+        return "Login token of {}".format(self.user.username)
+
 class Inivtation(models.Model):
     """
     This class provides a way to invite users to join the site and being redirected to a selected url.
@@ -16,19 +27,6 @@ class Inivtation(models.Model):
 
     def _srt_(self):
         return "Invitation for {}".format(self.email)
-
-
-class LoginToken(models.Model):
-    """
-     LoginToken class provides a way for password less login.
-    """
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    token = models.CharField(max_length=64, default=utilities.generate_security_token)
-    expiry_date = models.DateTimeField(default=utilities.days_from_current_time)
-
-    def _srt_(self):
-        return "Login token of {}".format(self.user.username)
-
 
 # The Profile class extends Django's default user model.
 class Profile(models.Model):
