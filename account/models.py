@@ -14,11 +14,12 @@ class LoginToken(models.Model):
     def _srt_(self):
         return "Login token of {}".format(self.user.username)
 
-class Inivtation(models.Model):
+class Invitation(models.Model):
     """
     This class provides a way to invite users to join the site and being redirected to a selected url.
     """
     email = models.CharField(max_length=256, blank=False)
+    name = models.CharField(max_length=256, blank=False)
     url = models.CharField(max_length=256, blank=False)
     login_token = models.OneToOneField(LoginToken)
     # If this is null then the invitation will be considered as pending.
@@ -242,3 +243,21 @@ class Profile(models.Model):
 
     def __srt__(self):
         return "Profile of user: {}".format(self.user.username)
+
+
+def create_review_invite(email, name, url):
+    ri = Invitation()
+
+
+def create_login_token(user):
+    # Delete the old token if any.
+    token = LoginToken.objects.filter(user=user)
+    if token:
+        token.delete()
+
+    # Create a new LoginToken
+    token = LoginToken()
+    token.user = user
+    token.save()
+
+    return token
