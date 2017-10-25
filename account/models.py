@@ -245,11 +245,31 @@ class Profile(models.Model):
         return "Profile of user: {}".format(self.user.username)
 
 
-def create_review_invite(email, name, url):
+def create_review_invite(email, name, url, lt):
+    """
+    Creates a pending invitation
+    :param email:  The email of the invited user
+    :param name:  The name of the invitations
+    :param url: The url where to redirect
+    :param lt: The Login Token
+    :return: Invitation object
+    """
     ri = Invitation()
+    ri.email = email
+    ri.name = name
+    ri.url = url
+    ri.login_token = lt
+    ri.save()
+
+    return ri
 
 
 def create_login_token(user):
+    """
+    Creates a new login token and it deletes the older ones
+    :param user: The user object on which to assign the login token
+    :return: LoginToken object
+    """
     # Delete the old token if any.
     token = LoginToken.objects.filter(user=user)
     if token:
