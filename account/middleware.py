@@ -7,7 +7,8 @@ from account.models import LoginToken
 
 class LoginTokenMiddleware(object):
     """
-    Checks for LoginToken on every's user request!
+    Checks for LoginToken on every's user request and if the Token is valid,
+    it logs the user.
     """
     def __init__(self, get_response):
         self.get_response = get_response
