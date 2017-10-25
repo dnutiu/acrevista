@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.utils import timezone
 from account.forms import LoginForm
-from account.mail import send_token_email, send_review_invitation_email
+from account.mail import send_token_email
 from .models import Profile, LoginToken, create_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
