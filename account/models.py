@@ -21,7 +21,6 @@ class Invitation(models.Model):
     email = models.CharField(max_length=256, blank=False)
     name = models.CharField(max_length=256, blank=False)
     url = models.CharField(max_length=256, blank=False)
-    login_token = models.OneToOneField(LoginToken)
     # If this is null then the invitation will be considered as pending.
     # If it's true or false the invitation will be considered as accepted or rejected.
     accepted = models.NullBooleanField()

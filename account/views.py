@@ -2,13 +2,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from django.utils import timezone
 from account.forms import LoginForm
 from account.mail import send_token_email
-from .models import Profile, LoginToken, Invitation, create_login_token
+from .models import Profile, Invitation, create_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
 
@@ -20,10 +19,15 @@ def accept_invite(request, id):
     It also assigns the user as a reviewer to the paper.
     """
 
-    # TODO: Find a way to globally check for user and authenticate the user.
-    # Redirect user /w token to desired page if account
-    # else create account and email user temp password
-    raise NotImplementedError
+    ri = get_object_or_404(Invitation, id=id)
+    user = User.objects.filter(email=ri.email)
+
+    if user is None:
+        return "No user"
+
+    token = create_login_token(user)
+
+    return HttpResponseRedirect("{url}?token={token}".format(url=ri.url, token=token.token))
 
 
 def reject_invite(request, id):
