@@ -3,43 +3,40 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.utils import timezone
 from account.forms import LoginForm
 from account.mail import send_token_email
-from .models import Profile, LoginToken, create_login_token
+from .models import Profile, LoginToken, Invitation, create_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
 
 
-# TODO: Make invite accepted/rejected views first.
-# @login_required
-# @user_passes_test(lambda u: u.is_staff)
-# def invite_user(request):
-#     data = {}
-#
-#     email = request.GET.get("email", None)
-#     url = request.GET.get("url", None)
-#     token = request.GET.get("token", None)
-#
-#     if url is None:
-#         url = "/"
-#
-#     if email is None:
-#         data["error"] = "No email was provided!"
-#         return JsonResponse(data)
-#
-#     if token is None:
-#         data["error"] = "Invalid token!"
-#         return JsonResponse(data)
-#
-#     # Invite the user.
-#
-#     send_review_invitation_email(email, "1")
-#
-#     return JsonResponse(data)
-#
+def accept_invite(request, id):
+    """
+    Accepts the user invite.
+    It shows that the user has accepted the invite and gives the token to the user.
+    It also assigns the user as a reviewer to the paper.
+    """
+
+    # TODO: Find a way to globally check for user and authenticate the user.
+    # Redirect user /w token to desired page if account
+    # else create account and email user temp password
+    raise NotImplementedError
+
+
+def reject_invite(request, id):
+    """
+    Rejects the user invite, deleting it /w the login token.
+    """
+    ri = get_object_or_404(Invitation, id=id)
+    name = ri.name
+    ri.login_token.delete()
+    ri.delete()
+
+    return render(request, 'account/reject_invite.html', {'name': name})
+
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -132,22 +129,6 @@ def dashboard(request):
 
 # Login the user.
 def user_login(request):
-    # Login the user automatically using the LoginToken
-    token = request.GET.get('token', None)
-    if token:
-        login_token = LoginToken.objects.filter(token=token)
-        if not login_token:  # We don't have any tokens in database.
-            messages.warning(request, "Invalid login token!")
-        else:
-            # Check if the token is still valid
-            if login_token[0].expiry_date < timezone.now():
-                messages.warning(request, "Token is expired!")
-            else:
-                # The login token is still valid, login the user!
-                messages.success(request, "You have been logged in successfully as {}!"
-                                 .format(str(login_token[0].user)))
-                login(request, login_token[0].user)
-
     if request.user.is_authenticated():
         return redirect('account:dashboard')
     elif request.method == 'POST':
