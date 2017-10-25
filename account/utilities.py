@@ -19,10 +19,10 @@ def generate_security_token(size=32):
     return base64.urlsafe_b64encode(os.urandom(size)).rstrip(b'=').decode('ascii')
 
 
-def days_from_current_time(days=10):
+def days_from_current_time(days=5):
     """
     Computes a date containing n days from the current time.
     :param days: The number of days.
     :return: The computed date.
     """
-    return timezone.now() + datetime.timedelta(days=10)
+    return timezone.now() + datetime.timedelta(days=days)
