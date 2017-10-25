@@ -25,7 +25,7 @@ def accept_invite(request, id):
     if user is None:
         return "No user"
 
-    token = create_login_token(user)
+    token = create_login_token(user[0])
 
     ri.delete()  # The user was logged in, delete the invitation.
     return HttpResponseRedirect("{url}?token={token}".format(url=ri.url, token=token.token))
