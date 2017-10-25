@@ -7,11 +7,39 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.utils import timezone
 from account.forms import LoginForm
-from account.mail import send_token_email
-from .models import Profile, LoginToken
+from account.mail import send_token_email, send_review_invitation_email
+from .models import Profile, LoginToken, create_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
 
+
+# TODO: Make invite accepted/rejected views first.
+# @login_required
+# @user_passes_test(lambda u: u.is_staff)
+# def invite_user(request):
+#     data = {}
+#
+#     email = request.GET.get("email", None)
+#     url = request.GET.get("url", None)
+#     token = request.GET.get("token", None)
+#
+#     if url is None:
+#         url = "/"
+#
+#     if email is None:
+#         data["error"] = "No email was provided!"
+#         return JsonResponse(data)
+#
+#     if token is None:
+#         data["error"] = "Invalid token!"
+#         return JsonResponse(data)
+#
+#     # Invite the user.
+#
+#     send_review_invitation_email(email, "1")
+#
+#     return JsonResponse(data)
+#
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -35,20 +63,13 @@ def generate_user_token(request):
             data["error"] = "User not found!"
         else:  # This is where we make the LoginToken.
 
-            # Delete the old token if any.
-            token = LoginToken.objects.filter(user=user[0])
-            if token:
-                token.delete()
-
-            # Create a new LoginToken
-            token = LoginToken()
-            token.user = user[0]
-            token.save()
+            token = create_login_token(user[0])
 
             # Notify the user that a token has been generated
             send_token_email(token.user.email, token.token)
 
             data['message'] = "Token was generated successfully!"
+            data['token'] = token.token
     except ValueError as e:
         data["error"] = str(e)
     except TypeError as e:
