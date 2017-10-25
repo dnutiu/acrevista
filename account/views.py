@@ -7,9 +7,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from account.forms import LoginForm
 from account.mail import send_token_email
-from .models import Profile, Invitation, create_login_token
+from .models import Profile, Invitation, create_login_token, get_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
+
+# TODO: Implement view for inviting user
 
 
 def accept_invite(request, id):
@@ -25,9 +27,15 @@ def accept_invite(request, id):
     if user is None:
         return "No user"
 
-    token = create_login_token(user[0])
+    if ri.accepted is None:  # The ReviewInvitation wasn't accepted nor rejected
+        token = create_login_token(user[0])
+        ri.accepted = True
+        ri.save()
+    elif ri.accepted is True:
+        token = get_login_token(user[0])
+    else:
+        return HttpResponseRedirect("/")
 
-    ri.delete()  # The user was logged in, delete the invitation.
     return HttpResponseRedirect("{url}?token={token}".format(url=ri.url, token=token.token))
 
 
@@ -37,7 +45,13 @@ def reject_invite(request, id):
     """
     ri = get_object_or_404(Invitation, id=id)
     name = ri.name
-    ri.delete()
+
+    # Redirect to home if the Review Invite was already rejected.
+    if ri.accepted is False:
+        return HttpResponseRedirect("/")
+
+    ri.accepted = False
+    ri.save()
 
     return render(request, 'account/reject_invite.html', {'name': name})
 

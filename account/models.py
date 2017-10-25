@@ -263,6 +263,15 @@ def create_review_invite(email, name, url, lt):
     return ri
 
 
+def get_login_token(user):
+    """
+    Returns the LoginToken for the specified user
+    :param user: The requested user
+    :return: The login token object
+    """
+    token = LoginToken.objects.filter(user=user)
+    return token[0]
+
 def create_login_token(user):
     """
     Creates a new login token and it deletes the older ones
