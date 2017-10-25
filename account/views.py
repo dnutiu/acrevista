@@ -27,6 +27,7 @@ def accept_invite(request, id):
 
     token = create_login_token(user)
 
+    ri.delete()  # The user was logged in, delete the invitation.
     return HttpResponseRedirect("{url}?token={token}".format(url=ri.url, token=token.token))
 
 
@@ -36,7 +37,6 @@ def reject_invite(request, id):
     """
     ri = get_object_or_404(Invitation, id=id)
     name = ri.name
-    ri.login_token.delete()
     ri.delete()
 
     return render(request, 'account/reject_invite.html', {'name': name})
