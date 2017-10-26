@@ -14,14 +14,14 @@ from journal import models as journal_models
 # TODO: Implement view for inviting user
 
 
-def accept_invite(request, id):
+def accept_invite(request, rev_id):
     """
     Accepts the user invite.
     It shows that the user has accepted the invite and gives the token to the user.
     It also assigns the user as a reviewer to the paper.
     """
 
-    ri = get_object_or_404(Invitation, id=id)
+    ri = get_object_or_404(Invitation, id=rev_id)
     user = User.objects.filter(email=ri.email)
 
     if user is None:
@@ -39,11 +39,11 @@ def accept_invite(request, id):
     return HttpResponseRedirect("{url}?token={token}".format(url=ri.url, token=token.token))
 
 
-def reject_invite(request, id):
+def reject_invite(request, rev_id):
     """
     Rejects the user invite, deleting it /w the login token.
     """
-    ri = get_object_or_404(Invitation, id=id)
+    ri = get_object_or_404(Invitation, id=rev_id)
     name = ri.name
 
     # Redirect to home if the Review Invite was already rejected.

@@ -5,7 +5,7 @@ from acrevista.settings import EMAIL_NOREPLY, BASE_URL, SITE_NAME
 from django.core.mail import send_mail
 
 
-def send_review_invitation_email(recipient, id):
+def send_review_invitation_email(recipient, rev_id):
     subject = "Review requested!"
     message = '''
     Hello,

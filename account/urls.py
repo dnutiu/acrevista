@@ -24,8 +24,8 @@ urlpatterns = [
     url(r'^email-change/$', views.change_email, name='email_change'),
     url(r'^personal-details/$', views.change_personal_details, name='personal_details'),
     # url(r'^generate-token/$', views.generate_user_token, name='generate_token'),
-    url(r'^invite/(?P<id>[\d]+)/accept', views.accept_invite, name="accept_invite"),
-    url(r'^invite/(?P<id>[\d]+)/reject', views.reject_invite, name="reject_invite"),
+    url(r'^invite/(?P<rev_id>[\d]+)/accept', views.accept_invite, name="accept_invite"),
+    url(r'^invite/(?P<rev_id>[\d]+)/reject', views.reject_invite, name="reject_invite"),
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
     # url(r'^users/follow/$', views.user_follow, name='user_follow'),
