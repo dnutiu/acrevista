@@ -26,6 +26,7 @@ urlpatterns = [
     # url(r'^generate-token/$', views.generate_user_token, name='generate_token'),
     url(r'^invite/(?P<rev_id>[\d]+)/accept', views.accept_invite, name="accept_invite"),
     url(r'^invite/(?P<rev_id>[\d]+)/reject', views.reject_invite, name="reject_invite"),
+    url(r'^invite/', views.invite_user, name="invite_user"),
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
     # url(r'^users/follow/$', views.user_follow, name='user_follow'),

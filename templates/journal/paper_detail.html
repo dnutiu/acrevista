@@ -1,24 +1,63 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% load widget_tweaks %}
 {% block title %}Paper: {{ paper.title }}{% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>#{{ paper.id }} - {{ paper.title|truncatechars:30 }}</h1>
+        <h1>#<span id="paper-id">{{ paper.id }}</span> - {{ paper.title|truncatechars:30 }}</h1>
     </div>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
             {% if request.user.is_staff %}
                 <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>In order to add reviewers, please use the admin view.
-                            Here you can see the list of reviewers:</p>
+                    <div class="panel-heading">Reviewer Control Panel</div>
+                    <div id="reviewer-control-panel" class="panel-body">
+                        {% verbatim %}
+                        <div v-show="hasSucceeded" class="alert alert-success alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Success!</strong> {{ responseMessage }}!
+                        </div>
+                        <div v-show="hasFailed" class="alert alert-danger alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Error!</strong> {{ responseMessage }}!
+                        </div>
+                        <div>
+                            <div class="help-block">
+                                <button type="button" class="btn btn-default btn-primary" v-on:click="addReviewer">
+                                    Invite a Reviewer
+                                </button>
+                            </div>
 
-                        <ul>
-                            {% for reviewer in paper.reviewers.all %}
-                                <li>{{ reviewer }}</li>
-                            {% endfor %}
-                        </ul>
+                            <div v-show="showAddReviewer" class="form-group well">
+                                <label for="reviewer-email">Email address</label>
+                                <div class="input-group ">
+                                    <span class="input-group-addon" id="basic-addon1">@</span>
+                                    <input v-model="reviewerEmail" id="reviewer-email" type="email" class="form-control"
+                                           placeholder="Email" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <p class="help-block">The user will receive an email to confirm his participation to
+                                        the review.</p>
+                                    <button type="submit" class="btn btn-default btn-primary"
+                                            v-on:click="inviteReviewer">
+                                        Invite
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endverbatim %}
+                        {% if paper.reviewers.all %}
+                            <h4>Reviewers:</h4>
+                            <ul>
+                                {% for reviewer in paper.reviewers.all %}
+                                    <li>{{ reviewer }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <h4>There aren't any reviewers for this paper!</h4>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -49,10 +88,6 @@
             <h2>Reviews</h2>
 
             {% if can_review %}
-                {# This was once used as a modal... good ol' times #}
-                {#                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#reviewModal">Add#}
-                {#                    Review#}
-                {#                </button>#}
                 <a href="{% url 'journal:paper_review' paper.id %}" target="_blank">Add a review</a>
             {% endif %}
             <hr>
@@ -68,16 +103,16 @@
                             <div class="review text-justify">
                                 <div class="panel-body">
                                     {% if review.editor_review %}
-                                        <b><p>Editor Review<span
-                                                class="pull-right">Rating: {{ review.recommendation }}</span></p></b>
+                                        <b>Editor Review<span
+                                                class="pull-right">Rating: {{ review.recommendation }}</span></b>
                                     {% else %}
-                                        <b><p>Review #{{ forloop.counter }} <span
-                                                class="pull-right">Rating: {{ review.recommendation }}</span></p></b>
+                                        <b>Review #{{ forloop.counter }} <span
+                                                class="pull-right">Rating: {{ review.recommendation }}</span></b>
                                     {% endif %}
 
                                     <div class="panel">
                                         <div class="panel-body">
-                                            <b><p class="small">Comment:</p></b>
+                                            <b><span class="small">Comment:</span></b>
                                             <p>
                                                 {{ review.comment }}
                                             </p>
@@ -116,68 +151,9 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
 
-    {# Moved in paper_review.html #}
-    {#    <div id="reviewModal" class="modal fade" role="dialog">#}
-    {#        <div class="modal-dialog">#}
-    {#            <div class="modal-content">#}
-    {#                <div class="modal-header">#}
-    {#                    <button type="button" class="close" data-dismiss="modal">&times;</button>#}
-    {#                    <h4 class="modal-title">Add a new review</h4>#}
-    {#                </div>#}
-    {#                {% if form.errors %}#}
-    {#                    {% for field in form %}#}
-    {#                        {% for error in field.errors %}#}
-    {#                            <div class="alert alert-danger alert-dismissable">#}
-    {#                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>#}
-    {#                                <strong>{{ field.name|escape }}: {{ error|escape }}</strong>#}
-    {#                            </div>#}
-    {#                        {% endfor %}#}
-    {#                    {% endfor %}#}
-    {#                    {% for error in form.non_field_errors %}#}
-    {#                        <div class="alert alert-danger alert-dismissable">#}
-    {#                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>#}
-    {#                            <strong>{{ field.name|escape }}: {{ error|escape }}</strong>#}
-    {#                        </div>#}
-    {#                    {% endfor %}#}
-    {#                {% endif %}#}
-    {#                <form method="post" action="{% url 'journal:paper_detail' paper.id %}" enctype="multipart/form-data">#}
-    {#                    <div class="modal-body">#}
-    {#                        <div class="form-group">#}
-    {#                            <label for="appropriate">Subject appropriateness of the manuscript</label>#}
-    {#                            {% render_field review_form.appropriate class="form-control" id="appropriate" %}#}
-    {#                        </div>#}
-    {#                        <div class="form-group">#}
-    {#                            <label for="recommendation">Recommendation</label>#}
-    {#                            {% render_field review_form.recommendation class="form-control" id="recommendation" %}#}
-    {#                        </div>#}
-    {#                        {% if user.is_staff %} {# Definetely needs more security... #}
-    {#                            <div class="form-group">#}
-    {#                                <label for="editor_review">Editor Review (The author will see this review)</label>#}
-    {#                                {% render_field review_form.editor_review class="form-control-static" id="editor_review" %}#}
-    {#                            </div>#}
-    {#                        {% endif %}#}
-    {#                        <div class="form-group">#}
-    {#                            <label for="author_comments">Detail comments to the author</label>#}
-    {#                            {% render_field review_form.comment rows=5 class="form-control" id="author_comments" %}#}
-    {#                        </div>#}
-    {#                        <div class="form-group">#}
-    {#                            <label for="confidential_comment">Confidential - This part will not be sent to the#}
-    {#                                author</label>#}
-    {#                            {% render_field review_form.confidential_comment rows=5 class="form-control" id="confidential_comment" %}#}
-    {#                        </div>#}
-    {#                        <div class="form-group">#}
-    {#                            <label for="file">Additional File</label>#}
-    {#                            {% render_field review_form.additional_file class="form-control-static" id="file" %}#}
-    {#                        </div>#}
-    {#                        {% csrf_token %}#}
-    {#                    </div>#}
-    {#                    <div class="modal-footer">#}
-    {#                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-    {#                        <button type="submit" class="btn btn-primary">Submit</button>#}
-    {#                    </div>#}
-    {#                </form>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
+{# The add Reviewer functionality is handled by a Vue app. #}
+{% block scripts %}
+    <script src="{% static "js/journal/paper_detail.js" %}"></script>
 {% endblock %}

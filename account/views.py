@@ -1,17 +1,17 @@
+import json
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from account.forms import LoginForm
-from account.mail import send_token_email
+from account.mail import send_token_email, send_review_invitation_email
 from .models import Profile, Invitation, create_login_token, get_login_token
 from .forms import UserRegistrationForm, ChangeEmailForm, ChangeNameForm, EditProfileForm
 from journal import models as journal_models
-
-# TODO: Implement view for inviting user
+from journal import utilities as journal_utilities
 
 
 def accept_invite(request, rev_id):
@@ -27,10 +27,12 @@ def accept_invite(request, rev_id):
     if user is None:
         return "No user"
 
-    if ri.accepted is None:  # The ReviewInvitation wasn't accepted nor rejected
+    if ri.accepted is None:  # The ReviewInvitation wasn't accepted nor rejected, it was accepted for the first time.
         token = create_login_token(user[0])
         ri.accepted = True
         ri.save()
+        # Must add user as a reviewer fml how do I do that? this is getting messy.
+        journal_utilities.add_reviewer_from_invitation(ri)
     elif ri.accepted is True:
         token = get_login_token(user[0])
     else:
@@ -58,11 +60,50 @@ def reject_invite(request, rev_id):
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
+def invite_user(request):
+    """
+    This method is invoked via JavaScript and it's used by the admins to invite users to the website.
+    The method will generate an Invitation and send it to the user.
+    """
+    if not request.is_ajax():
+        raise Http404
+
+    data = json.loads(str(request.body, encoding="utf-8"))
+    response = {}
+
+    user = User.objects.filter(email=data["email"])
+
+    if user:
+        invitation = Invitation.objects.filter(email=data["email"]).filter(name=data["name"])
+
+        # If we don't have an invitation for the user, create on and save it to the database.
+        if not invitation:
+            invitation = Invitation(email=data["email"], name=data["name"], url=data["url"])
+            invitation.save()
+            # Notify user that he has been invited.
+            # This is the worst piece of shit code that I ever written in my life..........
+            a_url = "invite/{id}/accept".format(id=invitation.id)
+            d_url = "invite/{id}/reject".format(id=invitation.id)
+            send_review_invitation_email(invitation.email, a_url, d_url)
+            response["message"] = "{} {} was invited successfully".format(user[0].first_name, user[0].last_name)
+        else:
+            response["error"] = "User has been invited already!"
+    else:
+        response["error"] = "User not found!"
+        return JsonResponse(response)
+
+    return JsonResponse(response)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def generate_user_token(request):
     """
     This function will generate a login token that expires in 10 days and it will assign it to a user.
     It is retrieves the user_id and paper_id from the GET request.
     It also notifies the user via email that a token has been generated.
+
+    This function is used by account.accept_invite view.
     """
     user_id = request.GET.get("user_id", None)
     data = {}

@@ -5,7 +5,7 @@ from acrevista.settings import EMAIL_NOREPLY, BASE_URL, SITE_NAME
 from django.core.mail import send_mail
 
 
-def send_review_invitation_email(recipient, rev_id):
+def send_review_invitation_email(recipient, a_url, d_url):
     subject = "Review requested!"
     message = '''
     Hello,
@@ -14,15 +14,16 @@ def send_review_invitation_email(recipient, rev_id):
 
     Do you accept the invitation?
     
-    Please click here if you accept: 
+    Please click here if you accept: <a href="{baseUrl}/account/{accept_url}">Accept Invitation</a>
     
-    Please click here to decline:
+    Please click here to decline: <a href="{baseUrl}/account/{decline_url}">Reject Invitation</a>
 
     Sincerely,
     The {site_name} team!
 
-    '''.format(site_name=SITE_NAME, baseUrl=BASE_URL, url=url)
+    '''.format(site_name=SITE_NAME, baseUrl=BASE_URL, accept_url=a_url, decline_url=d_url)
     send_mail(subject, message, EMAIL_NOREPLY, (recipient,), fail_silently=False)
+
 
 def send_token_email(recipient, token):
     """
