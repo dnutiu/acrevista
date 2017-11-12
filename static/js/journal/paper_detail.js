@@ -21,8 +21,8 @@ new Vue({
         reviewerEmail: "",
         responseMessage: "",
         showAddReviewer: false,
-        hasFailed: false,
-        hasSucceeded: false
+        invitationHasFailed: false,
+        invitationHasSucceeded: false
     },
     methods: {
         addReviewer: function () {
@@ -71,15 +71,15 @@ new Vue({
         },
         inviteReviewerSuccess: function (data) {
             console.log("Success!");
-            this.hasFailed = false;
-            this.hasSucceeded = true;
+            this.invitationHasFailed = false;
+            this.invitationHasSucceeded = true;
             this.responseMessage = data["message"];
             this.showAddReviewer = false;
         },
         inviteReviewerFailure: function (data) {
             this.responseMessage = data["error"];
-            this.hasFailed = true;
-            this.hasSucceeded = false;
+            this.invitationHasFailed = true;
+            this.invitationHasSucceeded = false;
         }
     }
 });

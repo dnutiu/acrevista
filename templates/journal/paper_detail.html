@@ -14,11 +14,11 @@
                     <div class="panel-heading">Reviewer Control Panel</div>
                     <div id="reviewer-control-panel" class="panel-body">
                         {% verbatim %}
-                        <div v-show="hasSucceeded" class="alert alert-success alert-dismissable">
+                        <div v-show="invitationHasSucceeded" class="alert alert-success alert-dismissable">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>Success!</strong> {{ responseMessage }}!
                         </div>
-                        <div v-show="hasFailed" class="alert alert-danger alert-dismissable">
+                        <div v-show="invitationHasFailed" class="alert alert-danger alert-dismissable">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>Error!</strong> {{ responseMessage }}!
                         </div>
