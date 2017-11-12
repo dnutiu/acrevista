@@ -74,7 +74,7 @@ def invite_user(request):
     user = User.objects.filter(email=data["email"])
 
     if user:
-        invitation = Invitation.objects.filter(email=data["email"]).filter(name=data["name"])
+        invitation = Invitation.objects.filter(email=data["email"], name=data["name"])
 
         # If we don't have an invitation for the user, create on and save it to the database.
         if not invitation:
