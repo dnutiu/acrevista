@@ -29,7 +29,7 @@ new Vue({
             this.showAddReviewer = !this.showAddReviewer
         },
         inviteReviewer: function () {
-            vue = this;
+            var vue = this;
             // Should make ajax call /w email, name and url.
             // Need to implement function that will create an Invitation
             var email = this.reviewerEmail;
@@ -48,13 +48,11 @@ new Vue({
             var postUrl = window.location.protocol + "//" + window.location.hostname
                 + ":" + window.location.port + "/account/invite/";
 
-            // Also make modal that shows ok or error.
             $.ajax({
                 type: "POST",
                 headers: {'X-CSRFToken': csrftoken},
                 url: postUrl,
                 data: JSON.stringify(data),
-                // success: success,
                 error: function (jqXHR) {
                     console.log("An error has occurred while sending the Ajax Request!");
                     console.log(jqXHR.responseType);
@@ -70,7 +68,6 @@ new Vue({
             });
         },
         inviteReviewerSuccess: function (data) {
-            console.log("Success!");
             this.invitationHasFailed = false;
             this.invitationHasSucceeded = true;
             this.responseMessage = data["message"];
