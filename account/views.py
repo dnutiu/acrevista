@@ -21,7 +21,7 @@ def accept_invite(request, rev_id):
     It also assigns the user as a reviewer to the paper.
     """
 
-    ri = get_object_or_404(Invitation, id=rev_id)
+    ri = get_object_or_404(Invitation, token=rev_id)
     user = User.objects.filter(email=ri.email)
 
     if user is None:
@@ -45,7 +45,7 @@ def reject_invite(request, rev_id):
     """
     Rejects the user invite, deleting it /w the login token.
     """
-    ri = get_object_or_404(Invitation, id=rev_id)
+    ri = get_object_or_404(Invitation, token=rev_id)
     name = ri.name
 
     # Redirect to home if the Review Invite was already rejected.
@@ -82,8 +82,8 @@ def invite_user(request):
             invitation.save()
             # Notify user that he has been invited.
             # This is the worst piece of shit code that I ever written in my life..........
-            a_url = "invite/{id}/accept".format(id=invitation.id)
-            d_url = "invite/{id}/reject".format(id=invitation.id)
+            a_url = "invite/{id}/accept".format(id=invitation.token)
+            d_url = "invite/{id}/reject".format(id=invitation.token)
             send_review_invitation_email(invitation.email, a_url, d_url)
             response["message"] = "{} {} was invited successfully".format(user[0].first_name, user[0].last_name)
         else:
