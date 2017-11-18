@@ -14,20 +14,21 @@ class LoginTokenMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        token = request.GET.get('token', None)
-        if token:
-            login_token = LoginToken.objects.filter(token=token)
-            if not login_token:  # We don't have any tokens in database.
-                messages.warning(request, "Invalid login token!")
-            else:
-                # Check if the token is still valid
-                if login_token[0].expiry_date < timezone.now():
-                    messages.warning(request, "Token is expired!")
+        if not request.user.is_authenticated():
+            token = request.GET.get('token', None)
+            if token:
+                login_token = LoginToken.objects.filter(token=token)
+                if not login_token:  # We don't have any tokens in database.
+                    messages.warning(request, "Invalid login token!")
                 else:
-                    # The login token is still valid, login the user!
-                    messages.success(request, "You have been logged in successfully as {}!"
-                                     .format(str(login_token[0].user)))
-                    login(request, login_token[0].user)
+                    # Check if the token is still valid
+                    if login_token[0].expiry_date < timezone.now():
+                        messages.warning(request, "Token is expired!")
+                    else:
+                        # The login token is still valid, login the user!
+                        messages.success(request, "You have been logged in successfully as {}!"
+                                         .format(str(login_token[0].user)))
+                        login(request, login_token[0].user)
 
         response = self.get_response(request)
 

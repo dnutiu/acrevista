@@ -64,7 +64,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if not user.is_authenticated %} {# User is not authenticated #}
                     <li><a href="{% url 'account:login' %}">Login</a></li>
-                    <li><a href="{% url 'account:register' %}">Register</a></li> {# TODO: Make modals :D #}
+                    <li><a href="{% url 'account:register' %}">Register</a></li>
 
                 {% else %} {# User is authenticated #}
                     <li class="dropdown">
