@@ -14,11 +14,11 @@
                     <div class="panel-heading">Reviewer Control Panel</div>
                     <div id="reviewer-control-panel" class="panel-body">
                         {% verbatim %}
-                        <div v-show="invitationHasSucceeded" class="alert alert-success alert-dismissable">
+                        <div v-show="invitationHasSucceeded"  style="display: none" class="alert alert-success alert-dismissable">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>Success!</strong> {{ responseMessage }}!
                         </div>
-                        <div v-show="invitationHasFailed" class="alert alert-danger alert-dismissable">
+                        <div v-show="invitationHasFailed"  style="display: none" class="alert alert-danger alert-dismissable">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                             <strong>Error!</strong> {{ responseMessage }}!
                         </div>
@@ -29,7 +29,7 @@
                                 </button>
                             </div>
 
-                            <div v-show="showAddReviewer" class="form-group well">
+                            <div v-show="showAddReviewer" style="display: none" class="form-group well">
                                 <label for="reviewer-email">Email address</label>
                                 <div class="input-group ">
                                     <span class="input-group-addon" id="basic-addon1">@</span>
