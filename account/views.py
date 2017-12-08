@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
+from django.core import serializers
 from django.http import JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
@@ -60,6 +61,45 @@ def reject_invite(request, rev_id):
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
+def cancel_invitation(request):
+    if not request.is_ajax():
+        raise Http404
+
+    data = json.loads(str(request.body, encoding="utf-8"))
+    invitation = Invitation.objects.filter(email=data["email"], name=data["name"])
+    response = {}
+    if invitation:
+        invitation[0].delete()
+        response["message"] = "Invitation deleted!"
+    else:
+        response["error"] = "No invitation deleted!"
+
+    return JsonResponse(response)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def get_invitations(request):
+    """
+    This method should return the invitations by name
+    """
+    if not request.is_ajax():
+        raise Http404
+
+    data = json.loads(str(request.body, encoding="utf-8"))
+    invitations = Invitation.objects.filter(name=data["name"])
+    response = {}
+
+    if invitations:
+        response = serializers.serialize('json', invitations)
+    else:
+        response["error"] = "No invitations!"
+
+    return JsonResponse(response, safe=False)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def invite_user(request):
     """
     This method is invoked via JavaScript and it's used by the admins to invite users to the website.
@@ -90,7 +130,6 @@ def invite_user(request):
             response["error"] = "User has been invited already!"
     else:
         response["error"] = "User not found!"
-        return JsonResponse(response)
 
     return JsonResponse(response)
 

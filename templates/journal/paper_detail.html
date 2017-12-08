@@ -12,42 +12,64 @@
             {% if request.user.is_staff %}
                 <div class="panel panel-default">
                     <div class="panel-heading">Reviewer Control Panel</div>
-                    <div id="reviewer-control-panel" class="panel-body">
-                        {% verbatim %}
-                        <div v-show="invitationHasSucceeded"  style="display: none" class="alert alert-success alert-dismissable">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>Success!</strong> {{ responseMessage }}!
-                        </div>
-                        <div v-show="invitationHasFailed"  style="display: none" class="alert alert-danger alert-dismissable">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>Error!</strong> {{ responseMessage }}!
-                        </div>
-                        <div>
-                            <div class="help-block">
-                                <button type="button" class="btn btn-default btn-primary" v-on:click="addReviewer">
-                                    Invite a Reviewer
-                                </button>
+                    <div class="panel-body">
+                        <div id="reviewer-control-panel">
+                            {% verbatim %}
+                            <div v-show="invitationHasSucceeded" style="display: none"
+                                 class="alert alert-success alert-dismissable">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>Success!</strong> {{ responseMessage }}!
                             </div>
-
-                            <div v-show="showAddReviewer" style="display: none" class="form-group well">
-                                <label for="reviewer-email">Email address</label>
-                                <div class="input-group ">
-                                    <span class="input-group-addon" id="basic-addon1">@</span>
-                                    <input v-model="reviewerEmail" id="reviewer-email" type="email" class="form-control"
-                                           placeholder="Email" required>
-                                </div>
-
-                                <div class="input-group">
-                                    <p class="help-block">The user will receive an email to confirm his participation to
-                                        the review.</p>
-                                    <button type="submit" class="btn btn-default btn-primary"
-                                            v-on:click="inviteReviewer">
-                                        Invite
+                            <div v-show="invitationHasFailed" style="display: none"
+                                 class="alert alert-danger alert-dismissable">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>Error!</strong> {{ responseMessage }}!
+                            </div>
+                            <div>
+                                <div class="help-block">
+                                    <button type="button" class="btn btn-default btn-primary" v-on:click="addReviewer">
+                                        Invite a Reviewer
                                     </button>
                                 </div>
+
+                                <div v-show="showAddReviewer" style="display: none" class="form-group well">
+                                    <label for="reviewer-email">Email address</label>
+                                    <div class="input-group ">
+                                        <span class="input-group-addon" id="basic-addon1">@</span>
+                                        <input v-model="reviewerEmail" id="reviewer-email" type="email"
+                                               class="form-control"
+                                               placeholder="Email" required>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <p class="help-block">The user will receive an email to confirm his
+                                            participation to
+                                            the review.</p>
+                                        <button type="submit" class="btn btn-default btn-primary"
+                                                v-on:click="inviteReviewer">
+                                            Invite
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+                            {% endverbatim %}
                         </div>
-                        {% endverbatim %}
+                        <div id="reviewer-invited-reviewers">
+                            {% verbatim %}
+                            <div v-show="showInvitedReviewers" style="display: none">
+                                    <h4>Invited Reviewers:</h4>
+                                    <ul>
+                                        <li v-for="(reviewer, i) in invitedReviewers" :key="reviewer.email"
+                                            v-on:remove="invited_reviewers.splice(i, 1)">
+
+                                            {{ reviewer.email }} (<a
+                                                @click="cancelInvite(i, reviewer.email, reviewer.name)">Cancel</a>)
+
+                                        </li>
+                                    </ul>
+                            </div>
+                            {% endverbatim %}
+                        </div>
                         {% if paper.reviewers.all %}
                             <h4>Reviewers:</h4>
                             <ul>

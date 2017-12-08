@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^invite/(?P<rev_id>[\w\d]+)/accept', views.accept_invite, name="accept_invite"),
     url(r'^invite/(?P<rev_id>[\w\d]+)/reject', views.reject_invite, name="reject_invite"),
     url(r'^invite/', views.invite_user, name="invite_user"),
+    url(r'^get-invite/$', views.get_invitations, name="get_invite"),
+    url(r'^cancel-invite/$', views.cancel_invitation, name="cancel_invite")
     # url(r'^users/$', views.user_list, name='user_list'),
     # # Must be placed BEFORE the users/username url
     # url(r'^users/follow/$', views.user_follow, name='user_follow'),
