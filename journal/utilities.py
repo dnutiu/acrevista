@@ -7,11 +7,14 @@ def add_reviewer_from_invitation(invitation):
     # Get the paper id from the invitation's name.
     # Get the user from the invitation's email.
     # Pray to god that this is secure.
-    paper = Paper.objects.filter(id=int(invitation.name))
-    user = User.objects.filter(email=invitation.email)
+    return add_reviewer(invitation.email, int(invitation.name))
+
+def add_reviewer(email, paper_id):
+    paper = Paper.objects.filter(id=paper_id)
+    user = User.objects.filter(email=email)
 
     if not paper or not user:
-        return  # A pai a dat erroare.
+        return False
 
     # Get the first result from the query.
     paper = paper[0]
@@ -19,3 +22,5 @@ def add_reviewer_from_invitation(invitation):
 
     paper.reviewers.add(user)
     paper.save()
+
+    return True

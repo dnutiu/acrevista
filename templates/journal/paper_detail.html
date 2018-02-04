@@ -62,7 +62,7 @@
                                         <li v-for="(reviewer, i) in invitedReviewers" :key="reviewer.email"
                                             v-on:remove="invited_reviewers.splice(i, 1)">
 
-                                            {{ reviewer.email }} (<a
+                                            {{ reviewer.email }} (<a href="#"
                                                 @click="cancelInvite(i, reviewer.email, reviewer.name)">Cancel</a>)
 
                                         </li>

@@ -173,6 +173,7 @@ var reviewersControlPanel = new Vue({
             this.invitationHasSucceeded = true;
             this.responseMessage = data["message"];
             this.showAddReviewer = false;
+            this.reviewerEmail = "";
         },
         inviteReviewerFailure: function (data) {
             this.responseMessage = data["error"];
