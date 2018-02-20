@@ -3,7 +3,10 @@
 {% block title %}Success{% endblock %}
 
 {% block content %}
-    <h1>Your paper '{{ paper.title }}' has been submitted successfully!</h1>
-    <p>You can view the status of your submitted papers in the account <a href="{% url "account:dashboard" %}">dashboard</a>.</p>
-    <p>Do you want to <a href="{% url 'journal:journal_submit' %}">submit</a> another one?</p>
+    <div class="container">
+        <h1>Your paper '{{ paper.title }}' has been submitted successfully!</h1>
+        <p>You can view the status of your submitted papers in the account <a href="{% url "account:dashboard" %}">dashboard</a>.
+        </p>
+        <p>Do you want to <a href="{% url 'journal:journal_submit' %}">submit</a> another one?</p>
+    </div>
 {% endblock %}

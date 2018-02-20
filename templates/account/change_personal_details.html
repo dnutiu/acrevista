@@ -4,77 +4,81 @@
 {% block setting-name %}- Personal Details{% endblock %}
 
 {% block settings %}
-    {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
+    <div class="container">
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger alert-dismissable">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
                 <div class="alert alert-danger alert-dismissable">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
                 </div>
             {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-            <div class="alert alert-danger alert-dismissable">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>{{ field.name|escape }}: {{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endif %}
-    <form action="{% url 'account:personal_details' %}" method="post">
-        <legend>Your name</legend>
-        <div class="form-group">
-            <label for="first-name">First Name</label>
-            {% render_field name_form.first_name class="form-control" id="first-name" placeholder="First Name" value=user.first_name %}
-        </div>
-        <div class="form-group">
-            <label for="last-name">Last Name</label>
-            {% render_field name_form.last_name class="form-control" id="last-name" placeholder="Last Name" value=user.last_name %}
-        </div>
-        <legend>Additional Info</legend>
-        <div class="form-group">
-            <label for="title-field">Title</label>
-            {% render_field profile_form.title class="form-control" id="title-field" value=user.profile.title selected=user.profile.title %}
-        </div>
-        <div class="form-group">
-            <label for="phone-field">Phone</label>
-            {% render_field profile_form.phone class="form-control" id="phone-field" placeholder="Phone" value=user.profile.phone %}
-        </div>
-        <div class="form-group">
-            <label for="country-field">Country</label>
-            {% render_field profile_form.country class="form-control" id="country-field" %}
-        </div>
-        <div class="form-group">
-            <label for="affiliation-field">Affiliation</label>
-            {% render_field profile_form.affiliation class="form-control" id="affiliation-field" placeholder="Affiliation" value=user.profile.affiliation %}
-        </div>
-        <fieldset>
-            {% csrf_token %}
+        {% endif %}
+        <form action="{% url 'account:personal_details' %}" method="post">
+            <legend>Your name</legend>
             <div class="form-group">
-                <div>
-                    <button type="reset" class="btn btn-default">Reset</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+                <label for="first-name">First Name</label>
+                {% render_field name_form.first_name class="form-control" id="first-name" placeholder="First Name" value=user.first_name %}
             </div>
-        </fieldset>
-    </form>
-    <script>
-        {# This will update the selection fields to match the ones from our model. #}
-        {# If we don't do this then the user needs to manually reselect the country and title #}
-        {# everytime he wants to update his profile. #}
-        function selectElement(e, val) {
-            var options = e.options;
-            for (i = 0; i < options.length; ++i) {
-                if (options[i].value === val) {
-                    e.selectedIndex = i;
-                    break;
+            <div class="form-group">
+                <label for="last-name">Last Name</label>
+                {% render_field name_form.last_name class="form-control" id="last-name" placeholder="Last Name" value=user.last_name %}
+            </div>
+            <legend>Additional Info</legend>
+            <div class="form-group">
+                <label for="title-field">Title</label>
+                {% render_field profile_form.title class="form-control" id="title-field" value=user.profile.title selected=user.profile.title %}
+            </div>
+            <div class="form-group">
+                <label for="phone-field">Phone</label>
+                {% render_field profile_form.phone class="form-control" id="phone-field" placeholder="Phone" value=user.profile.phone %}
+            </div>
+            <div class="form-group">
+                <label for="country-field">Country</label>
+                {% render_field profile_form.country class="form-control" id="country-field" %}
+            </div>
+            <div class="form-group">
+                <label for="affiliation-field">Affiliation</label>
+                {% render_field profile_form.affiliation class="form-control" id="affiliation-field" placeholder="Affiliation" value=user.profile.affiliation %}
+            </div>
+            <fieldset>
+                {% csrf_token %}
+                <div class="form-group">
+                    <div>
+                        <button type="reset" class="btn btn-default">Reset</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <script>
+            {# This will update the selection fields to match the ones from our model. #}
+            {# If we don't do this then the user needs to manually reselect the country and title #}
+            {# everytime he wants to update his profile. #}
+
+            function selectElement(e, val) {
+                var options = e.options;
+                for (i = 0; i < options.length; ++i) {
+                    if (options[i].value === val) {
+                        e.selectedIndex = i;
+                        break;
+                    }
                 }
             }
-        }
-        (function() {
-            var country = document.getElementById('country-field');
-            var title   = document.getElementById('title-field');
-            selectElement(country, "{{ user.profile.country }}");
-            selectElement(title, "{{ user.profile.title }}");
-        })();
-    </script>
+
+            (function () {
+                var country = document.getElementById('country-field');
+                var title = document.getElementById('title-field');
+                selectElement(country, "{{ user.profile.country }}");
+                selectElement(title, "{{ user.profile.title }}");
+            })();
+        </script>
+    </div>
 {% endblock %}
