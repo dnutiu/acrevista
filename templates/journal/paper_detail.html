@@ -35,9 +35,9 @@
                                     </div>
 
                                     <div v-show="showAddReviewer" style="display: none" class="form-group well">
-                                        <label for="reviewer-email">Email address</label>
+                                        <label for="reviewer-email">Email address of the reviewer to be invited (he must
+                                            have an account):</label>
                                         <div class="input-group ">
-                                            <span class="input-group-addon" id="basic-addon1">@</span>
                                             <input v-model="reviewerEmail" id="reviewer-email" type="email"
                                                    class="form-control"
                                                    placeholder="Email" required>
@@ -47,11 +47,11 @@
                                             <p class="help-block">The user will receive an email to confirm his
                                                 participation to
                                                 the review.</p>
-                                            <button type="submit" class="btn btn-default btn-primary"
-                                                    v-on:click="inviteReviewer">
-                                                Invite
-                                            </button>
                                         </div>
+                                        <button type="submit" class="d-block btn btn-primary"
+                                                v-on:click="inviteReviewer">
+                                            Invite
+                                        </button>
                                     </div>
                                 </div>
                                 {% endverbatim %}
@@ -128,15 +128,15 @@
                                     <div class="panel-body">
                                         {% if review.editor_review %}
                                             <b>Editor Review<span
-                                                    class="pull-right">Rating: {{ review.recommendation }}</span></b>
+                                                    class="pull-right"> | Rating: {{ review.recommendation }}</span></b>
                                         {% else %}
-                                            <b>Review #{{ forloop.counter }} <span
-                                                    class="pull-right">Rating: {{ review.recommendation }}</span></b>
+                                            <b>Review #{{ forloop.counter }}<span
+                                                    class="pull-right"> | Rating: {{ review.recommendation }}</span></b>
                                         {% endif %}
 
                                         <div class="panel">
                                             <div class="panel-body">
-                                                <b><span class="small">Comment:</span></b>
+                                                <b><span class="small">Public Comment:</span></b>
                                                 <p>
                                                     {{ review.comment }}
                                                 </p>
@@ -150,20 +150,22 @@
 
                                         {# Confidential data displayed only to the editor #}
                                         {% if user.is_staff %}
+                                            <hr>
                                             <div class="panel panel-warning">
                                                 <div class="panel-heading">
-                                                    <h5>Confidential data</h5>
+                                                    <p>Data displayed only to the editor:</p>
                                                 </div>
                                                 <div class="panel-body">
-                                                    <h5>
-                                                        Reviewer: {{ review.user.first_name }} {{ review.user.last_name }}</h5>
-                                                    <h5>Appropriateness: {{ review.get_appropriate_display }}</h5>
-                                                    <h5>Confidential comment:</h5>
+                                                    <p>
+                                                        Reviewer: {{ review.user.first_name }} {{ review.user.last_name }}</p>
+                                                    <p>Appropriateness: {{ review.get_appropriate_display }}</p>
+                                                    <p>Confidential comment:</p>
                                                     <p>
                                                         {{ review.confidential_comment }}
                                                     </p>
                                                 </div>
                                             </div>
+                                            <p>End of review.</p>
                                         {% endif %}
                                     </div>
                                     <hr>
