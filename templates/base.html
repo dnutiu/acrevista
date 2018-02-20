@@ -21,73 +21,69 @@
 {% cms_toolbar %}
 
 {# NAVBAR AREA BEGIN #}
-<nav class="navbar navbar-default">
-    <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'journal:journal_home' %}">AC Journal</a>
-        </div>
-        {# Navbar content #}
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                {# Account Dropdown Menu #}
-                <li{% if section == 'account' %} class="active"{% endif %}><a href="{% url 'account:dashboard' %}">Account</a>
-                </li>
-                {# Jornal Dropdown Menu #}
-                <li class="dropdown {% if section == 'journal' %}active{% endif %}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="true">Journal <span class="caret"></span></a>
+<div class="container">
+    <div class="navigation-bar" id="top">
+        <nav class="navbar navbar-expand-md navbar-light bg-red"><a href="/" class="navbar-brand">Novel Computation
+            &amp; Control</a>
+            <button type="button" class="navbar-toggler"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav"></ul>
+                <ul class="mr-auto navbar-nav">
 
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'journal:journal_home' %}">Home</a></li>
-                        <li><a href="{% url 'journal:journal_history' %}">History</a></li>
-                        <li><a href="{% url 'journal:journal_profile' %}">Profile</a></li>
-                        <li><a href="{% url 'journal:journal_review' %}">Review</a></li>
-                        <li><a href="{% url 'journal:journal_guidelines' %}">Submission Guidelines</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">Paper Submissions</li>
-                        <li><a href="{% url 'journal:journal_submit' %}">Submit a paper</a></li>
-                    </ul>
-                </li>
-                {# Issues Dropdown Menu #}
-                <li{% if section == 'issues' %} class="active"{% endif %}>
-                    <a href="{% url 'issues:issues_home' %}">Issues</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if not user.is_authenticated %} {# User is not authenticated #}
-                    <li><a href="{% url 'account:login' %}">Login</a></li>
-                    <li><a href="{% url 'account:register' %}">Register</a></li>
+                    <li class="nav-item {% if section == 'account' %}active{% endif %}"><a
+                            href="{% url 'account:dashboard' %}" class="nav-link">Account</a></li>
 
-                {% else %} {# User is authenticated #}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">{{ user.username }} <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{% url 'account:personal_details' %}">Edit Personal Details</a></li>
-                            <li><a href="{% url 'account:password_change' %}">Change Password</a></li>
-                            <li><a href="{% url 'account:email_change' %}">Change Email</a></li>
-                            <li><a href="mailto:nutiudenis@hotmail.com,alext@cs.upt.ro,mudrescu@cs.upt.ro">Feedback</a>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'account:logout' %}">Logout</a></li>
-                        </ul>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                           aria-haspopup="true" aria-expanded="false">Journal</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'journal:journal_home' %}">Home</a>
+                            <a class="dropdown-item" href="{% url 'journal:journal_history' %}">History</a>
+                            <a class="dropdown-item" href="{% url 'journal:journal_profile' %}">Profile</a>
+                            <a class="dropdown-item" href="{% url 'journal:journal_review' %}">Review</a>
+                            <a class="dropdown-item" href="{% url 'journal:journal_guidelines' %}">Submission
+                                Guidelines</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'journal:journal_submit' %}">Submit a paper</a>
+                        </div>
                     </li>
-                {% endif %} {# End User is Authenticated #}
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
+
+                    <li class="nav-item {% if section == 'issues' %}active{% endif %}"><a
+                            href="{% url 'issues:issues_home' %}"
+                            class="nav-link">Issues</a>
+                    </li>
+
+                </ul>
+                <ul class="ml-auto navbar-nav">
+                    {% if not user.is_authenticated %}
+                        <li class="nav-item"><a href="{% url 'account:register' %}" class="nav-link">Register</a></li>
+                        <li class="nav-item"><a href="{% url 'account:login' %}" class="nav-link">Login</a></li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'account:personal_details' %}">Edit Personal
+                                    Details</a>
+                                <a class="dropdown-item" href="{% url 'account:password_change' %}">Change Password</a>
+                                <a class="dropdown-item" href="{% url 'account:email_change' %}">Change Email</a>
+                                <a class="dropdown-item"
+                                   href="mailto:nutiudenis@hotmail.com,alext@cs.upt.ro,mudrescu@cs.upt.ro">Feedback</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a>
+                            </div>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
 <div class="clearfix"></div>
 {# MAIN AREA #}
-<main class="container" role="main">
+<main role="main">
     {# Messages that are passed here via Django views. #}
     {% if messages %}
         {% for message in messages %}
@@ -106,22 +102,51 @@
 </main>
 
 <div class="clearfix"></div>
-
 {# FOOTER AREA #}
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <p class="text-muted">UPT AC Revista platform.</p>
-            </div>
+<footer class="container-fluid footer">
+    <section class="d-flex flex-row flex-wrap">
+        <div class="child-40 flex-column p-5 ">
+            <h2>Novel</h2>
+            <h2>Computation &</h2>
+            <h2>Control</h2>
+            <p></p>
+            <p>Bulevardul Vasile Pârvan 2, <b>Timișoara</b> 300223</p>
+            <p><b>Tel:</b> <a href="tel:777-7777-7777">777-7777-7777</a></p>
         </div>
-    </div>
+        <div class="child-30 flex-column p-5 ">
+            <h5>About Us</h5>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="/">Homepage</a>
+                <li><a href="/">About Us</a></li>
+                <li><a href="https://www.upt.ro/">Univeristatea Politehnica Timisoara</a></li>
+                <li><a href="">Guidelines</a></li>
+                <li><a href="https://github.com/NovelComputationAndControl"
+                       target="_blank" rel="noopener noreferrer">Github</a></li>
+                <li><a>Contact</a></li>
+            </ul>
+        </div>
+        <div class="child-20 flex-column p-5 ">
+            <h5>Legal</h5>
+            <ul class="align-self-start list-unstyled">
+                <li>
+                    <a>Privacy Policy</a></li>
+                <li>
+                    <a>Cookie Policy</a></li>
+            </ul>
+        </div>
+    </section>
+    <hr/>
+    <section class="text-center copyright">
+        <p>© {% now "Y" %} Novel Computation & Control.</p>
+    </section>
 </footer>
 
 {# JavaScripts and what not #}
 <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
-<script src="{% static "js/vue.js" %}"></script> {# TODO: Use production vue: vue.min.js #}
+<script src="{% static "js/vue.js" %}"></script>
+{# TODO: Use production vue: vue.min.js #}
 {% render_block "js" %}
 {% block scripts %}{% endblock %}
 </body>
