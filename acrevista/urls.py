@@ -19,6 +19,7 @@ from django.views.static import serve
 from journal import views as journal_views
 from . import settings
 
+
 handler404 = 'account.views.custom_404'
 urlpatterns = [
     url(r'^$', journal_views.homepage, name="home"),  # Journal Homepage :)
@@ -28,6 +29,7 @@ urlpatterns = [
     url(r'^account/', include('account.urls', namespace='account', app_name='account')),
     url(r'^journal/', include('journal.urls', namespace='journal', app_name='journal')),
     url(r'^issues/', include('issues.urls', namespace='issues', app_name='issues')),
+    url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
     url(r'^', include('cms.urls')),

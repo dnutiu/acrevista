@@ -12,12 +12,14 @@ django-widget-tweaks==1.4.1
 djangocms-admin-style==1.2.7
 djangocms-text-ckeditor==3.5.0
 djangorestframework==3.7.0
+djangorestframework-jwt==1.11.0
 gunicorn==19.7.1
 html5lib==0.9999999
 olefile==0.44
 Pillow==4.2.1
 psycopg2==2.7.1
 pycparser==2.17
+PyJWT==1.6.0
 python-magic==0.4.13
 pytz==2017.2
 rcssmin==1.0.6
