@@ -138,6 +138,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
 ]
 
+# Rest Framework and JWT Settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -147,6 +148,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+}
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.payload_handler.jwt_response_payload_handler',
+    'JWT_PAYLOAD_HANDLER': 'api.payload_handler.jwt_payload_handler',
 }
 
 TEMPLATES = [
