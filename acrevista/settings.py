@@ -104,6 +104,8 @@ INSTALLED_APPS = [
 
     # Django CMS required apps.
     'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',
     'cms',
     'menus',
     'treebeard',
@@ -117,6 +119,7 @@ INSTALLED_APPS = [
     'account',
     'journal',
     'issues',
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -140,13 +143,10 @@ MIDDLEWARE = [
 
 # Rest Framework and JWT Settings
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
