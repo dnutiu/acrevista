@@ -1,0 +1,12 @@
+# Python compiled
+*.pyc
+
+# OS Stuff
+*.DS_Store
+
+# IDE stuff
+.idea/
+
+# Static Files
+staticfiles/
+uploads/
