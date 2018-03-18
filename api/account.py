@@ -5,6 +5,8 @@ from rest_framework import serializers, status
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 
+from api.permissions import PublicEndpoint
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -28,6 +30,8 @@ class UserCreate(APIView):
     """
     Creates the user.
     """
+    permission_classes = (PublicEndpoint,)
+    # TODO: Add some throttling.
 
     def post(self, request, format='json'):
         serializer = UserSerializer(data=request.data)

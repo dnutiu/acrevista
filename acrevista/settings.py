@@ -152,10 +152,10 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
-JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.payload_handler.jwt_response_payload_handler',
-    'JWT_PAYLOAD_HANDLER': 'api.payload_handler.jwt_payload_handler',
-}
+# JWT_AUTH = {
+#     'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.payload_handler.jwt_response_payload_handler',
+#     'JWT_PAYLOAD_HANDLER': 'api.payload_handler.jwt_payload_handler',
+# }
 
 TEMPLATES = [
     {
