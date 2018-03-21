@@ -1,8 +1,6 @@
 from django.core.urlresolvers import reverse
-from rest_framework.test import APIRequestFactory
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 from rest_framework import status
 
 
@@ -13,6 +11,28 @@ class AccountsTest(APITestCase):
 
         # URL for creating an account.
         self.create_url = reverse('api:api-register')
+        self.get_token = reverse('api:api-token-login')
+
+    def test_user_can_login_via_token(self):
+        """
+        Ensure that the user can login via token after it was created.
+        If the user has
+        """
+        data = {
+            'username': 'foobar@example.com',
+            'email': 'foobar@example.com',
+            'password': 'somepassword'
+        }
+        response = self.client.post(self.create_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 2)
+
+        response = self.client.post(self.get_token, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data['password'] = "ha"
+        response = self.client.post(self.get_token, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_user(self):
         """
@@ -25,13 +45,8 @@ class AccountsTest(APITestCase):
 
         response = self.client.post(self.create_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        user = User.objects.latest('id')
-        token = Token.objects.get(user=user)
         self.assertEqual(User.objects.count(), 2)
-
         self.assertEqual(response.data['email'], data['email'])
-        self.assertEqual(response.data['token'], token.key)
         self.assertFalse('password' in response.data)
 
     def test_create_user_with_short_password(self):
