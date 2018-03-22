@@ -9,9 +9,38 @@ class AccountsTest(APITestCase):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
 
-        # URL for creating an account.
+        # URL's
         self.create_url = reverse('api:api-register')
         self.get_token = reverse('api:api-token-login')
+        self.sample_protected_endpoint = reverse('api:api-test-protected')
+
+    def test_protected_endpoint(self):
+        """
+        Ensure that an anonymous user can't access a protected endpoint and a logged in user can.
+        """
+        response = self.client.get(self.sample_protected_endpoint, {})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Create user
+        data = {
+            'username': 'foobar@example.com',
+            'email': 'foobar@example.com',
+            'password': 'somepassword'
+        }
+        response = self.client.post(self.create_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Get token
+        response = self.client.post(self.get_token, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        token = response.data["token"]
+
+        # Auth
+        response = self.client.get(self.sample_protected_endpoint, data, content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["message"], "Da")
 
     def test_user_can_login_via_token(self):
         """

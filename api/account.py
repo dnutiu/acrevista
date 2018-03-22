@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import serializers, status, permissions
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
+from rest_framework_jwt import authentication
 
 from account.models import Profile
 from api.permissions import PublicEndpoint
@@ -43,3 +44,16 @@ class UserCreate(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestPermissions(APIView):
+    """
+    Test whether an user can access a protected endpoint.
+    """
+
+    authentication_classes = (authentication.JSONWebTokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        json = {"message": "Da"}
+        return Response(json, status=status.HTTP_200_OK)
