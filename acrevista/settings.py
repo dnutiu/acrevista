@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+
+import datetime
 import dj_database_url
 
 # This project uses Django CMS
@@ -161,10 +163,11 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-# JWT_AUTH = {
-#     'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.payload_handler.jwt_response_payload_handler',
-#     'JWT_PAYLOAD_HANDLER': 'api.payload_handler.jwt_payload_handler',
-# }
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.account.jwt_response_payload_handler',
+    # 'JWT_PAYLOAD_HANDLER': 'api.payload_handler.jwt_payload_handler',
+}
 
 TEMPLATES = [
     {

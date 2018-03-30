@@ -1,3 +1,4 @@
+import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, status, permissions
@@ -6,7 +7,22 @@ from django.contrib.auth.models import User
 from rest_framework_jwt import authentication
 
 from account.models import Profile
+from acrevista import settings
 from api.permissions import PublicEndpoint
+
+
+def jwt_response_payload_handler(token, user=None, request=None):
+    """ Custom response payload handler.
+    This function controls the custom payload after login or token refresh. This data is returned through the web API.
+    https://github.com/GetBlimp/django-rest-framework-jwt/issues/145
+    """
+    return {
+        'token': token,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'expiration_date': (datetime.datetime.utcnow() + settings.JWT_AUTH['JWT_EXPIRATION_DELTA']).timestamp()
+    }
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,6 +52,7 @@ class UserCreate(APIView):
     Creates the user.
     """
     permission_classes = (PublicEndpoint,)
+
     # TODO: Add some throttling.
 
     def post(self, request):
