@@ -23,6 +23,8 @@ class AccountsTest(APITestCase):
 
         # Create user
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobar@example.com',
             'email': 'foobar@example.com',
             'password': 'somepassword'
@@ -48,6 +50,8 @@ class AccountsTest(APITestCase):
         If the user has
         """
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobar@example.com',
             'email': 'foobar@example.com',
             'password': 'somepassword'
@@ -68,6 +72,8 @@ class AccountsTest(APITestCase):
         Ensure we can create a new user and a valid token is created with it.
         """
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'email': 'foobar@example.com',
             'password': 'somepassword'
         }
@@ -84,6 +90,8 @@ class AccountsTest(APITestCase):
         """
 
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobar',
             'email': 'foobarbaz@example.com',
             'password': 'foo'
@@ -96,6 +104,8 @@ class AccountsTest(APITestCase):
 
     def test_create_user_with_no_password(self):
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobar',
             'email': 'foobarbaz@example.com',
             'password': ''
@@ -108,6 +118,8 @@ class AccountsTest(APITestCase):
 
     def test_create_user_with_preexisting_email(self):
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'testuser2',
             'email': 'test@example.com',
             'password': 'testuser'
@@ -120,6 +132,8 @@ class AccountsTest(APITestCase):
 
     def test_create_user_with_invalid_email(self):
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobarbaz',
             'email': 'testing',
             'passsword': 'foobarbaz'
@@ -132,6 +146,8 @@ class AccountsTest(APITestCase):
 
     def test_create_user_with_no_email(self):
         data = {
+            'first_name': "Bakir",
+            'last_name': 'aos',
             'username': 'foobar',
             'email': '',
             'password': 'foobarbaz'
