@@ -15,16 +15,20 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     password = serializers.CharField(min_length=8, write_only=True)
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=30)
 
     def create(self, validated_data):
         user = User.objects.create_user(username=validated_data['email'],
                                         email=validated_data['email'],
-                                        password=validated_data['password'])
+                                        password=validated_data['password'],
+                                        first_name=validated_data['first_name'],
+                                        last_name=validated_data['last_name'])
         return user
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'email', 'password', 'first_name', 'last_name')
 
 
 class UserCreate(APIView):
