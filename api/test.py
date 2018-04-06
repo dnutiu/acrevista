@@ -11,11 +11,14 @@ class AccountsTest(APITestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
+        Profile.objects.create(user=self.test_user)
 
         # URL's
         self.create_url = reverse('api:api-register')
         self.get_token = reverse('api:api-token-login')
         self.sample_protected_endpoint = reverse('api:api-test-protected')
+        self.change_details = reverse('api:api-change-user-details')
+        self.change_password = reverse('api:api-change-password')
 
     def test_protected_endpoint(self):
         """
@@ -160,6 +163,38 @@ class AccountsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(len(response.data['email']), 1)
+
+    def test_user_can_change_password(self):
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword',
+        }
+        response = self.client.post(self.get_token, data)
+        token = response.data["token"]
+
+        data = {
+            "old_password": "testpassword",
+            "new_password": "testpassword1"
+        }
+        response = self.client.put(self.change_password, json.dumps(data), content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_change_name(self):
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword',
+        }
+        response = self.client.post(self.get_token, data)
+        token = response.data["token"]
+
+        data = {
+            "first_name": "Dr",
+            "last_name": "Phd"
+        }
+        response = self.client.put(self.change_details, json.dumps(data), content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class ProfileTest(APITestCase):
