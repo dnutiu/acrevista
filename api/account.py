@@ -1,16 +1,15 @@
 import datetime
 
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import serializers, status, permissions
-from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
+from rest_framework import serializers, status, permissions
+from rest_framework.response import Response
+from rest_framework.validators import UniqueValidator
+from rest_framework.views import APIView
 from rest_framework_jwt import authentication
 
 from account.models import Profile
 from acrevista import settings
-from api.permissions import PublicEndpoint, UserOwnsProfile
+from api.permissions import PublicEndpoint
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -52,36 +51,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'first_name', 'last_name', 'is_staff')
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    """
-        Serializes Profile model data.
-    """
-    class Meta:
-        model = Profile
-        fields = "__all__"
-
-
-class ProfileDetail(APIView):
-    """
-        Retrieve or update the User's profile.
-    """
-
-    permission_classes = (PublicEndpoint, UserOwnsProfile,)
-
-    def get_object(self, request, pk):
-        try:
-            object = Profile.objects.get(pk=pk)
-            self.check_object_permissions(request=request, obj=object)
-            return object
-        except Profile.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk):
-        profile = self.get_object(request=request, pk=pk)
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
 
 
 class UserCreate(APIView):
