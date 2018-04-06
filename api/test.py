@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
 
+from account.models import Profile
+
 
 class AccountsTest(APITestCase):
     def setUp(self):
@@ -157,3 +159,67 @@ class AccountsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(len(response.data['email']), 1)
+
+
+class ProfileTest(APITestCase):
+    def setUp(self):
+        # We want to go ahead and originally create a user.
+        self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
+        self.staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
+
+        # Create the profiles
+        Profile.objects.create(user=self.test_user)
+        Profile.objects.create(user=self.staff_user)
+
+        # URL's
+        self.get_token_url = reverse('api:api-token-login')
+        self.get_user_profile = reverse('api:api-get-profile', kwargs={'pk': self.test_user.profile.pk})
+        self.get_staff_profile = reverse('api:api-get-profile', kwargs={'pk': self.staff_user.profile.pk})
+
+    def get_token(self, data):
+        response = self.client.post(self.get_token_url, data)
+        return response.data["token"]
+
+    def test_user_can_get_own_profile(self):
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword',
+        }
+        token = self.get_token(data)
+
+        # Get own profile
+        response = self.client.get(self.get_user_profile, data, content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Default country is Romania
+        self.assertEqual(response.data['country'], "Romania")
+
+    def admin_can_get_any_profile(self):
+        data = {
+            'username': 'staffuser',
+            'password': 'testpassword',
+        }
+        token = self.get_token(data)
+
+        # Get test user profile
+        response = self.client.get(self.get_user_profile, data, content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Get admin user profile
+        response = self.client.get(self.get_staff_profile, data, content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_cant_get_any_profile(self):
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword',
+        }
+        token = self.get_token(data)
+
+        # Get admin user profile
+        response = self.client.get(self.get_staff_profile, data, content_type='application/json',
+                                   HTTP_AUTHORIZATION="JWT {}".format(token))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

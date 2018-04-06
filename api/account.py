@@ -1,4 +1,6 @@
 import datetime
+
+from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, status, permissions
@@ -8,7 +10,7 @@ from rest_framework_jwt import authentication
 
 from account.models import Profile
 from acrevista import settings
-from api.permissions import PublicEndpoint
+from api.permissions import PublicEndpoint, UserOwnsProfile
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -18,6 +20,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
     """
     return {
         'token': token,
+        'id': user.id,
+        'profile_pk': user.profile.pk,
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
@@ -50,6 +54,36 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'first_name', 'last_name', 'is_staff')
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    """
+        Serializes Profile model data.
+    """
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+
+class ProfileDetail(APIView):
+    """
+        Retrieve or update the User's profile.
+    """
+
+    permission_classes = (PublicEndpoint, UserOwnsProfile,)
+
+    def get_object(self, request, pk):
+        try:
+            object = Profile.objects.get(pk=pk)
+            self.check_object_permissions(request=request, obj=object)
+            return object
+        except Profile.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        profile = self.get_object(request=request, pk=pk)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+
+
 class UserCreate(APIView):
     """
     Creates the user.
@@ -58,6 +92,7 @@ class UserCreate(APIView):
 
     # TODO: Add some throttling.
 
+    @classmethod
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -77,6 +112,7 @@ class TestPermissions(APIView):
     authentication_classes = (authentication.JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
+    @classmethod
     def get(self, request):
         json = {"message": "Da"}
         return Response(json, status=status.HTTP_200_OK)
