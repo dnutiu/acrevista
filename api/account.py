@@ -21,6 +21,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'is_staff': user.is_staff,
         'expiration_date': (datetime.datetime.utcnow() + settings.JWT_AUTH['JWT_EXPIRATION_DELTA']).timestamp()
     }
 
@@ -33,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
     first_name = serializers.CharField(max_length=30)
     last_name = serializers.CharField(max_length=30)
+    is_staff = serializers.BooleanField(read_only=True)
 
     def create(self, validated_data):
         user = User.objects.create_user(username=validated_data['email'],
@@ -40,11 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
                                         password=validated_data['password'],
                                         first_name=validated_data['first_name'],
                                         last_name=validated_data['last_name'])
+        Profile.objects.create(user=user)
         return user
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'first_name', 'last_name')
+        fields = ('id', 'email', 'password', 'first_name', 'last_name', 'is_staff')
 
 
 class UserCreate(APIView):
@@ -60,7 +63,6 @@ class UserCreate(APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
-                Profile.objects.create(user=user)
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
 
