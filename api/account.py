@@ -1,3 +1,6 @@
+"""
+    This file will handle API functionality related to user Accounts.
+"""
 import datetime
 
 from django.contrib.auth.models import User

@@ -1,3 +1,6 @@
+"""
+    This file will handle API functionality related to the user Profile.
+"""
 import itertools
 from django.http import Http404
 from rest_framework import serializers, status, permissions

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 
 from account.models import Profile
+from journal.models import Paper
 
 
 class AccountsTest(APITestCase):
@@ -331,3 +332,24 @@ class ProfileTest(APITestCase):
     def test_valid_countries(self):
         response = self.client.get(self.get_valid_countries, None, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class PaperTest(APITestCase):
+    def setUp(self):
+        # We want to go ahead and originally create a user.
+        self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
+        Profile.objects.create(user=self.test_user)
+
+        # URL's
+        self.papers_count = reverse('api:api-papers-count')
+
+    def test_get_number_of_papers(self):
+        """
+            Ensure that the server responds with the correct number of submitted papers.
+        """
+        response = self.client.get(self.papers_count, None, content_type='application/json')
+        self.assertEqual(response.data, 0)
+
+        Paper(user=self.test_user).save()
+        response = self.client.get(self.papers_count, None, content_type='application/json')
+        self.assertEqual(response.data, 1)
