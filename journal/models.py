@@ -32,7 +32,7 @@ def review_user_id_path(instance, filename):
 
 
 # File validator.
-validate_file = FileValidator(max_size=1024 * 1024 * 50,  # Max size is 50Mb
+JOURNAL_PAPER_FILE_VALIDATOR = FileValidator(max_size=1024 * 1024 * 50,  # Max size is 50Mb
                               content_types=('application/pdf', 'text/html', 'application/msword',
                                              'application/vnd.openxmlformats-officedocument.wordprocessingml.'
                                              'document',
@@ -48,7 +48,7 @@ class Paper(models.Model):
     )
     user = models.ForeignKey(User, related_name='papers')
     editor = models.ForeignKey(User, blank=True, null=True, related_name='editor_papers')
-    title = models.CharField(max_length=64, blank=False)
+    title = models.CharField(max_length=256, blank=False)
     # Paper info
     description = models.TextField(max_length=2000, blank=False, help_text="Represents the abstract of the paper.")
     authors = models.TextField(max_length=4096,
@@ -58,10 +58,10 @@ class Paper(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, default='processing')
     # Files
-    manuscript = models.FileField(upload_to=user_id_path, blank=False, validators=[validate_file])
-    cover_letter = models.FileField(upload_to=user_id_path, blank=False, validators=[validate_file])
+    manuscript = models.FileField(upload_to=user_id_path, blank=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
+    cover_letter = models.FileField(upload_to=user_id_path, blank=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
     supplementary_materials = models.FileField(upload_to=user_id_path, blank=True, null=True, default=None,
-                                               validators=[validate_file])
+                                               validators=[JOURNAL_PAPER_FILE_VALIDATOR])
 
     class Meta:
         ordering = ('-created',)
@@ -107,7 +107,7 @@ class Review(models.Model):
     confidential_comment = models.TextField(max_length=32768,
                                             help_text="This comment will not be shown to the author.")
 
-    additional_file = models.FileField(upload_to=review_user_id_path, blank=True, validators=[validate_file])
+    additional_file = models.FileField(upload_to=review_user_id_path, blank=True, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
 
     class Meta:
         ordering = ('created',)

@@ -342,6 +342,17 @@ class PaperTest(APITestCase):
 
         # URL's
         self.papers_count = reverse('api:api-papers-count')
+        self.papers_submitted = reverse('api:api-paper-submitted')
+        self.get_token = reverse('api:api-token-login')
+
+        # Authenticate the test user.
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword'
+        }
+        response = self.client.post(self.get_token, data)
+        token = response.data["token"]
+        self.authorization_header = "JWT {}".format(token)
 
     def test_get_number_of_papers(self):
         """
@@ -350,6 +361,18 @@ class PaperTest(APITestCase):
         response = self.client.get(self.papers_count, None, content_type='application/json')
         self.assertEqual(response.data, 0)
 
-        Paper(user=self.test_user).save()
+        Paper.objects.create(user=self.test_user)
         response = self.client.get(self.papers_count, None, content_type='application/json')
         self.assertEqual(response.data, 1)
+
+    def test_user_can_get_own_papers(self):
+        response = self.client.get(self.papers_submitted, None, content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.data, [])
+
+        Paper.objects.create(user=self.test_user)
+        response = self.client.get(self.papers_submitted, None, content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+
+        # The response will now be an array of order dicts that will have the user pk equal to the test user's.
+        self.assertEqual(response.data[0]["user"], self.test_user.pk)
