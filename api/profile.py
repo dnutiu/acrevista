@@ -2,6 +2,8 @@
     This file will handle API functionality related to the user Profile.
 """
 import itertools
+
+from django.contrib.auth.models import User
 from django.http import Http404
 from rest_framework import serializers, status, permissions
 from rest_framework.decorators import api_view, permission_classes
@@ -35,10 +37,19 @@ def valid_countries(request):
     return Response(PROFILE_VALID_COUNTRIES, status=status.HTTP_200_OK)
 
 
+class UserDetailsSerializer(serializers.ModelSerializer):
+    """
+        Serializes some of the safe user details.
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'is_staff', 'is_active')
+
 class ProfileSerializer(serializers.ModelSerializer):
     """
         Serializes Profile model data.
     """
+    user = UserDetailsSerializer(read_only=True)
     title = serializers.CharField(max_length=64, default='Dr')
     phone = serializers.CharField(max_length=64, default='')
     country = serializers.CharField(max_length=64, default='Romania')
@@ -56,7 +67,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('title', 'phone', 'country', 'affiliation')
+        fields = ('title', 'phone', 'country', 'affiliation', 'user')
 
 
 class ProfileDetail(APIView):
