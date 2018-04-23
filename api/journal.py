@@ -6,7 +6,7 @@ import itertools
 from django.core.exceptions import ValidationError
 from rest_framework import status, serializers, generics, permissions
 from rest_framework.decorators import permission_classes, api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from api.permissions import PublicEndpoint
@@ -29,6 +29,7 @@ class PaperSerializer(serializers.ModelSerializer):
     """
         Serializer for the Paper model.
     """
+    editor = serializers.PrimaryKeyRelatedField(read_only=True)
     title = serializers.CharField(max_length=256, required=True)
     description = serializers.CharField(max_length=2000, required=True)
     authors = serializers.CharField(max_length=4096, required=True)
@@ -58,14 +59,11 @@ class PaperSerializer(serializers.ModelSerializer):
 
     def validate_supplementary_materials(self, data):
         print("validate_supplementary_materials")
-        print(data)
-        return data
 
     class Meta:
         model = Paper
-        fields = ('user', 'title', 'description', 'authors', 'status',
+        fields = ('user', 'editor', 'title', 'description', 'authors', 'status',
                   'manuscript', 'cover_letter', 'supplementary_materials')
-
 
 
 class PaperListSubmitted(generics.ListCreateAPIView):
@@ -86,3 +84,36 @@ class PaperListSubmitted(generics.ListCreateAPIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PaperListAll(generics.ListAPIView):
+    """
+        This view lists the all the papers.
+    """
+    queryset = Paper.objects.all()
+    serializer_class = PaperSerializer
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+
+class PaperListEditor(generics.ListAPIView):
+    """
+        This view lists the papers where the user is an editor.
+    """
+    queryset = Paper.objects.all()
+    serializer_class = PaperSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self, *args, **kwargs):
+        return Paper.objects.all().filter(editor=self.request.user)
+
+
+class PaperListNoEditor(generics.ListAPIView):
+    """
+        This view lists the papers that don't have an editor.
+    """
+    queryset = Paper.objects.all()
+    serializer_class = PaperSerializer
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def get_queryset(self, *args, **kwargs):
+        return Paper.objects.all().filter(editor=None)
