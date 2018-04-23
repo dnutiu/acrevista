@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from api.permissions import PublicEndpoint
+from api.profile import UserDetailsSerializer
 from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR
 
 
@@ -34,6 +35,7 @@ class PaperSerializer(serializers.ModelSerializer):
     description = serializers.CharField(max_length=2000, required=True)
     authors = serializers.CharField(max_length=4096, required=True)
     status = serializers.CharField(default="processing")
+    reviewers = UserDetailsSerializer(read_only=True, many=True)
     manuscript = serializers.FileField(required=True)
     cover_letter = serializers.FileField(required=True)
     supplementary_materials = serializers.FileField(required=False)
@@ -63,7 +65,7 @@ class PaperSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paper
         fields = ('user', 'editor', 'title', 'description', 'authors', 'status',
-                  'manuscript', 'cover_letter', 'supplementary_materials')
+                  'manuscript', 'cover_letter', 'supplementary_materials', 'reviewers')
 
 
 class PaperListSubmitted(generics.ListCreateAPIView):
