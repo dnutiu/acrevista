@@ -13,7 +13,6 @@ from api.permissions import PublicEndpoint
 from api.profile import UserDetailsSerializer
 from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR
 
-
 PAPER__STATUS_CHOICES = set(itertools.chain.from_iterable(Paper.STATUS_CHOICES))
 
 
@@ -30,37 +29,23 @@ class PaperSerializer(serializers.ModelSerializer):
     """
         Serializer for the Paper model.
     """
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     editor = serializers.PrimaryKeyRelatedField(read_only=True)
     title = serializers.CharField(max_length=256, required=True)
     description = serializers.CharField(max_length=2000, required=True)
     authors = serializers.CharField(max_length=4096, required=True)
     status = serializers.CharField(default="processing")
     reviewers = UserDetailsSerializer(read_only=True, many=True)
-    manuscript = serializers.FileField(required=True)
-    cover_letter = serializers.FileField(required=True)
-    supplementary_materials = serializers.FileField(required=False)
+    manuscript = serializers.FileField(allow_empty_file=False, allow_null=False, required=True,
+                                       validators=[JOURNAL_PAPER_FILE_VALIDATOR])
+    cover_letter = serializers.FileField(allow_empty_file=False, allow_null=False, required=True,
+                                         validators=[JOURNAL_PAPER_FILE_VALIDATOR])
+    supplementary_materials = serializers.FileField(required=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
 
     def validate_status(self, value):
         if value not in PAPER__STATUS_CHOICES:
             raise serializers.ValidationError("Invalid paper status!")
         return value
-
-    def validate_manuscript(self, data):
-        try:
-            JOURNAL_PAPER_FILE_VALIDATOR(data)
-            return data
-        except ValidationError as e:
-            raise serializers.ValidationError(str(e))
-
-    def validate_cover_letter(self, data):
-        try:
-            JOURNAL_PAPER_FILE_VALIDATOR(data)
-            return data
-        except ValidationError as e:
-            raise serializers.ValidationError(str(e))
-
-    def validate_supplementary_materials(self, data):
-        print("validate_supplementary_materials")
 
     class Meta:
         model = Paper
@@ -80,7 +65,7 @@ class PaperListSubmitted(generics.ListCreateAPIView):
         return Paper.objects.all().filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        serializer = PaperSerializer(data=request.data, partial=True)
+        serializer = PaperSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data)
