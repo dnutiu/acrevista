@@ -1,12 +1,6 @@
-import base64
 import json
-from tempfile import TemporaryFile
-from urllib.parse import urlencode
 
 from django.core.urlresolvers import reverse
-from io import BytesIO
-
-from django.utils.datastructures import MultiValueDict
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -438,30 +432,30 @@ class PaperTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["title"], "NoEditorPaper")
 
-    # def test_user_can_submit_a_paper(self):
-    #     """
-    #         Ensure that an user is able to upload a paper.
-    #
-    #         This test is not working.. yet
-    #     """
-    #     tmp_file = open("__init__.py", "w")
-    #     data = {
-    #         "title": "paper",
-    #         "authors": "me",
-    #         "description": "ma detailed description",
-    #         "manuscript": base64.b64encode(tmp_file.read()).decode(),
-    #         "cover_letter": base64.b64encode(tmp_file.read()).decode()
-    #     }
-    #     tmp_file.close()
-    #
-    #
-    #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
-    #                                 HTTP_AUTHORIZATION=self.authorization_header)
-    #     print(response.data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #
-    #     del data["cover_letter"]
-    #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
-    #                                 HTTP_AUTHORIZATION=self.authorization_header)
-    #     print(response.data)
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # def test_user_can_submit_a_paper(self):
+        #     """
+        #         Ensure that an user is able to upload a paper.
+        #
+        #         This test is not working.. yet
+        #     """
+        #     tmp_file = open("__init__.py", "w")
+        #     data = {
+        #         "title": "paper",
+        #         "authors": "me",
+        #         "description": "ma detailed description",
+        #         "manuscript": base64.b64encode(tmp_file.read()).decode(),
+        #         "cover_letter": base64.b64encode(tmp_file.read()).decode()
+        #     }
+        #     tmp_file.close()
+        #
+        #
+        #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
+        #                                 HTTP_AUTHORIZATION=self.authorization_header)
+        #     print(response.data)
+        #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+        #
+        #     del data["cover_letter"]
+        #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
+        #                                 HTTP_AUTHORIZATION=self.authorization_header)
+        #     print(response.data)
+        #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

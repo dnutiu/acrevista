@@ -3,8 +3,7 @@
 """
 import itertools
 
-from django.core.exceptions import ValidationError
-from rest_framework import status, serializers, generics, permissions
+from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
