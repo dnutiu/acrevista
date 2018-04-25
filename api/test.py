@@ -1,6 +1,10 @@
+import base64
 import json
+from tempfile import TemporaryFile
+from urllib.parse import urlencode
 
 from django.core.urlresolvers import reverse
+from django.utils.datastructures import MultiValueDict
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -432,30 +436,58 @@ class PaperTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["title"], "NoEditorPaper")
 
-        # def test_user_can_submit_a_paper(self):
-        #     """
-        #         Ensure that an user is able to upload a paper.
-        #
-        #         This test is not working.. yet
-        #     """
-        #     tmp_file = open("__init__.py", "w")
-        #     data = {
-        #         "title": "paper",
-        #         "authors": "me",
-        #         "description": "ma detailed description",
-        #         "manuscript": base64.b64encode(tmp_file.read()).decode(),
-        #         "cover_letter": base64.b64encode(tmp_file.read()).decode()
-        #     }
-        #     tmp_file.close()
-        #
-        #
-        #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
-        #                                 HTTP_AUTHORIZATION=self.authorization_header)
-        #     print(response.data)
-        #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-        #
-        #     del data["cover_letter"]
-        #     response = self.client.post(self.papers_submitted, data=urlencode(MultiValueDict(data)), content_type='application/x-www-form-urlencoded',
-        #                                 HTTP_AUTHORIZATION=self.authorization_header)
-        #     print(response.data)
-        #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_user_can_submit_a_paper(self):
+        from api.journal import PaperListSubmitted
+        from django.test.client import RequestFactory
+        from django.core.files import temp as tempfile
+        """
+            Ensure that an user is able to upload a paper.
+        """
+
+        request_factory = RequestFactory()
+        manuscript = tempfile.NamedTemporaryFile(suffix=".txt")
+        cover_letter = tempfile.NamedTemporaryFile(suffix=".txt")
+        manuscript.write(b"This is my stupid paper that required me to research writing this test for over 5h")
+        cover_letter.write(b"This is my stupid paper that required me to research writing this test for over 5h")
+        manuscript.seek(0)
+        cover_letter.seek(0)
+
+        post_data = {
+            "title": "My post title",
+            "description": "this is my paper description",
+            "authors": "no authors",
+            "manuscript": manuscript,
+            "cover_letter": cover_letter
+        }
+
+        request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
+                                       data=post_data)
+
+        response = PaperListSubmitted.as_view()(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_cannot_submit_incomplete_paper(self):
+        from api.journal import PaperListSubmitted
+        from django.test.client import RequestFactory
+        from django.core.files import temp as tempfile
+        """
+            Ensure that an user is not able to upload an incomplete paper.
+        """
+
+        request_factory = RequestFactory()
+        manuscript = tempfile.NamedTemporaryFile(suffix=".txt")
+        manuscript.write(b"This is my stupid paper that required me to research writing this test for over 5h")
+        manuscript.seek(0)
+
+        post_data = {
+            "title": "My post title",
+            "description": "this is my paper description",
+            "authors": "no authors",
+            "manuscript": manuscript,
+        }
+
+        request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
+                                       data=post_data)
+
+        response = PaperListSubmitted.as_view()(request)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
