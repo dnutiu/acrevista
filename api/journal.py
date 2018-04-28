@@ -39,7 +39,7 @@ class PaperSerializer(serializers.ModelSerializer):
                                        validators=[JOURNAL_PAPER_FILE_VALIDATOR])
     cover_letter = serializers.FileField(allow_empty_file=False, allow_null=False, required=True,
                                          validators=[JOURNAL_PAPER_FILE_VALIDATOR])
-    supplementary_materials = serializers.FileField(required=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
+    supplementary_materials = serializers.FileField(allow_null=True, required=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
 
     def validate_status(self, value):
         if value not in PAPER__STATUS_CHOICES:
