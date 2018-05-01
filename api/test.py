@@ -1,14 +1,11 @@
-import base64
 import json
-from tempfile import TemporaryFile
-from urllib.parse import urlencode
-
 from django.core.urlresolvers import reverse
-from django.utils.datastructures import MultiValueDict
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
-
+from api import journal
+from django.test.client import RequestFactory
+from django.core.files import temp as tempfile
 from account.models import Profile
 from journal.models import Paper
 
@@ -343,7 +340,7 @@ class PaperTest(APITestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
-        Profile.objects.create(user=self.test_user)
+        Profile.objects.create(id= 0, user=self.test_user)
 
         # URL's
         self.papers_count = reverse('api:api-papers-count')
@@ -437,9 +434,6 @@ class PaperTest(APITestCase):
         self.assertEqual(response.data[0]["title"], "NoEditorPaper")
 
     def test_user_can_submit_a_paper(self):
-        from api.journal import PaperListSubmitted
-        from django.test.client import RequestFactory
-        from django.core.files import temp as tempfile
         """
             Ensure that an user is able to upload a paper.
         """
@@ -463,13 +457,10 @@ class PaperTest(APITestCase):
         request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
                                        data=post_data)
 
-        response = PaperListSubmitted.as_view()(request)
+        response = journal.PaperListSubmitted.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_cannot_submit_incomplete_paper(self):
-        from api.journal import PaperListSubmitted
-        from django.test.client import RequestFactory
-        from django.core.files import temp as tempfile
         """
             Ensure that an user is not able to upload an incomplete paper.
         """
@@ -489,5 +480,48 @@ class PaperTest(APITestCase):
         request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
                                        data=post_data)
 
-        response = PaperListSubmitted.as_view()(request)
+        response = journal.PaperListSubmitted.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_can_get_paper_detail(self):
+        """
+            Ensure that an user can get it's own paper's details, cannot retrieve 404 paper and cannot retrieve
+            an admin's paper.
+        """
+        request_factory = RequestFactory()
+        request = request_factory.get(reverse('api:api-paper-detail', kwargs={'pk': 1}),
+                                      HTTP_AUTHORIZATION=self.authorization_header)
+        Paper.objects.create(user=self.test_user)
+
+        # User can retrieve it's own paper
+        response = journal.PaperDetail.as_view()(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # User will get 404 if paper is not found
+        response = journal.PaperDetail.as_view()(request, pk=0)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # User cannot retrieve paper from staff.
+        staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
+        Profile.objects.create(user=staff_user)
+        Paper.objects.create(user=staff_user)
+        response = journal.PaperDetail.as_view()(request, pk=2)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Authenticate the staff user & Check if the staff user can retrieve it's own paper
+        data = {
+            'username': 'staffuser',
+            'password': 'testpassword'
+        }
+        response = self.client.post(self.get_token, data)
+        staff_token = "JWT {}".format(response.data["token"])
+        request = request_factory.get(reverse('api:api-paper-detail', kwargs={'pk': 1}),
+                                      HTTP_AUTHORIZATION=staff_token)
+        response = journal.PaperDetail.as_view()(request, pk=2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['user'], staff_user.pk)
+
+        # Staff user can retrieve testuser's paper
+        response = journal.PaperDetail.as_view()(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['user'], self.test_user.pk)

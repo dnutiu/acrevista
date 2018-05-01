@@ -2,7 +2,7 @@ from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 from api.account import UserCreate, TestPermissions, ChangePasswordView, ChangeNameView
-from api.journal import papers_count, PaperListSubmitted, PaperListAll, PaperListEditor, PaperListNoEditor
+from api.journal import papers_count, PaperListSubmitted, PaperListAll, PaperListEditor, PaperListNoEditor, PaperDetail
 from api.profile import ProfileDetail, valid_titles, valid_countries
 
 urlpatterns = [
@@ -22,7 +22,9 @@ urlpatterns = [
     url(r'^papers/all/', PaperListAll.as_view(), name="api-papers-all"),
     url(r'^papers/editor/', PaperListEditor.as_view(), name="api-papers-editor"),
     url(r'^papers/no-editor/', PaperListNoEditor.as_view(), name="api-papers-no-editor"),
+    url(r'^papers/detail/(?P<pk>[0-9]+)/$', PaperDetail.as_view(), name="api-paper-detail"),
     url(r'^papers/', PaperListSubmitted.as_view(), name="api-papers-submitted"),
+
     # Test
     url(r'^prajituri/$', TestPermissions.as_view(), name="api-test-protected"),
 ]

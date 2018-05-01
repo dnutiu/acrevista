@@ -39,7 +39,8 @@ class PaperSerializer(serializers.ModelSerializer):
                                        validators=[JOURNAL_PAPER_FILE_VALIDATOR])
     cover_letter = serializers.FileField(allow_empty_file=False, allow_null=False, required=True,
                                          validators=[JOURNAL_PAPER_FILE_VALIDATOR])
-    supplementary_materials = serializers.FileField(allow_null=True, required=False, validators=[JOURNAL_PAPER_FILE_VALIDATOR])
+    supplementary_materials = serializers.FileField(allow_null=True, required=False,
+                                                    validators=[JOURNAL_PAPER_FILE_VALIDATOR])
 
     def validate_status(self, value):
         if value not in PAPER__STATUS_CHOICES:
@@ -48,8 +49,22 @@ class PaperSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Paper
-        fields = ('user', 'editor', 'title', 'description', 'authors', 'status',
+        fields = ('id', 'user', 'editor', 'title', 'description', 'authors', 'status',
                   'manuscript', 'cover_letter', 'supplementary_materials', 'reviewers')
+
+
+class PaperDetail(generics.RetrieveAPIView):
+    """
+        Retrieve the detail of a single paper.
+    """
+    serializer_class = PaperSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_staff:
+            return Paper.objects.all()
+
+        return Paper.objects.all().filter(user=self.request.user)
 
 
 class PaperListSubmitted(generics.ListCreateAPIView):
