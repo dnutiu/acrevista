@@ -56,7 +56,6 @@ class PaperListSubmitted(generics.ListCreateAPIView):
     """
         This view lists the papers currently belonging to a user and lets the user submit it's own papers.
     """
-    queryset = Paper.objects.all()
     serializer_class = PaperSerializer
     permission_classes = (IsAuthenticated,)
 
