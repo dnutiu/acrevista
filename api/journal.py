@@ -3,6 +3,7 @@
 """
 import itertools
 
+from django.db.models import query
 from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -40,7 +41,7 @@ def set_editor(request, pk):
             paper.editor = None
             paper.save()
             return Response({"message": "deleted"}, status=status.HTTP_200_OK)
-    except Exception:
+    except Paper.DoesNotExist:
         return Response({"details": "Paper not found!"}, status.HTTP_404_NOT_FOUND)
 
 
