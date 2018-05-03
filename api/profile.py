@@ -41,9 +41,11 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
         Serializes some of the safe user details.
     """
+
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'is_staff', 'is_active')
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
@@ -79,7 +81,7 @@ class ProfileDetail(APIView):
 
     def get_object(self, request, pk):
         try:
-            obj = Profile.objects.get(pk=pk)
+            obj = User.objects.get(pk=pk).profile
             self.check_object_permissions(request=request, obj=obj)
             return obj
         except Profile.DoesNotExist:
