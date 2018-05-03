@@ -340,7 +340,7 @@ class PaperTest(APITestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
-        Profile.objects.create(id= 0, user=self.test_user)
+        Profile.objects.create(id=0, user=self.test_user)
 
         # URL's
         self.papers_count = reverse('api:api-papers-count')
@@ -525,3 +525,41 @@ class PaperTest(APITestCase):
         response = journal.PaperDetail.as_view()(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['user'], self.test_user.pk)
+
+    def test_staff_can_set_editor(self):
+        request_factory = RequestFactory()
+        staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
+        Profile.objects.create(user=staff_user)
+        paper = Paper.objects.create(user=self.test_user)
+        Paper.objects.create(user=staff_user)
+
+        # Authenticate the staff user
+        data = {
+            'username': 'staffuser',
+            'password': 'testpassword'
+        }
+        response = self.client.post(self.get_token, data)
+        staff_token = "JWT {}".format(response.data["token"])
+        request = request_factory.post(reverse('api:api-papers-editor-add', kwargs={'pk': 1}),
+                                       HTTP_AUTHORIZATION=staff_token)
+
+        # Set staff user as an editor on the test user's paper.
+        self.assertEqual(paper.editor, None)
+        response = journal.set_editor(request, paper.pk)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        paper = Paper.objects.get(user=self.test_user)
+        self.assertEqual(paper.editor.pk, staff_user.pk)
+
+        # Staff user can delete itself as an editor
+        request = request_factory.delete(reverse('api:api-papers-editor-add', kwargs={'pk': 1}),
+                                         HTTP_AUTHORIZATION=staff_token)
+        response = journal.set_editor(request, paper.pk)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        paper = Paper.objects.get(user=self.test_user)
+        self.assertEqual(paper.editor, None)
+
+        # Non-staff user cannot set itself as an editor
+        request = request_factory.delete(reverse('api:api-papers-editor-add', kwargs={'pk': 1}),
+                                         HTTP_AUTHORIZATION=self.authorization_header)
+        response = journal.set_editor(request, paper.pk)
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)

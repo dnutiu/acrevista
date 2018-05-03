@@ -24,6 +24,26 @@ def papers_count(request):
     return Response(Paper.objects.count(), status=status.HTTP_200_OK)
 
 
+@api_view(['POST', 'DELETE'])
+@permission_classes((IsAuthenticated, IsAdminUser))
+def set_editor(request, pk):
+    """
+        Ensure that a staff member can set itself as an editor.
+    """
+    try:
+        paper = Paper.objects.get(id=pk)
+        if paper and request.method == 'POST':
+            paper.editor = request.user
+            paper.save()
+            return Response({"message": "set"}, status=status.HTTP_200_OK)
+        elif paper and request.method == 'DELETE':
+            paper.editor = None
+            paper.save()
+            return Response({"message": "deleted"}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response({"details": "Paper not found!"}, status.HTTP_404_NOT_FOUND)
+
+
 class PaperSerializer(serializers.ModelSerializer):
     """
         Serializer for the Paper model.
