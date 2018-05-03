@@ -527,6 +527,9 @@ class PaperTest(APITestCase):
         self.assertEqual(response.data['user'], self.test_user.pk)
 
     def test_staff_can_set_editor(self):
+        """
+            Ensure that a staff user can set itself as an editor to any paper and a regular user can't.
+        """
         request_factory = RequestFactory()
         staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
         Profile.objects.create(user=staff_user)
