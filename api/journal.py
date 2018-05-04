@@ -3,7 +3,7 @@
 """
 import itertools
 
-from django.db.models import query
+from django.contrib.auth.models import User
 from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -28,6 +28,7 @@ def papers_count(request):
 @api_view(['POST', 'DELETE'])
 @permission_classes((IsAuthenticated, IsAdminUser))
 def set_editor(request, pk):
+    # TODO: Needs refactoring. See AddRemoveReviewer class view, should be similar.
     """
         Ensure that a staff member can set itself as an editor.
     """
@@ -36,11 +37,11 @@ def set_editor(request, pk):
         if paper and request.method == 'POST':
             paper.editor = request.user
             paper.save()
-            return Response({"message": "set"}, status=status.HTTP_200_OK)
+            return Response({"details": "set"}, status=status.HTTP_200_OK)
         elif paper and request.method == 'DELETE':
             paper.editor = None
             paper.save()
-            return Response({"message": "deleted"}, status=status.HTTP_200_OK)
+            return Response({"details": "deleted"}, status=status.HTTP_200_OK)
     except Paper.DoesNotExist:
         return Response({"details": "Paper not found!"}, status.HTTP_404_NOT_FOUND)
 
@@ -72,6 +73,68 @@ class PaperSerializer(serializers.ModelSerializer):
         model = Paper
         fields = ('id', 'user', 'editor', 'title', 'description', 'authors', 'status',
                   'manuscript', 'cover_letter', 'supplementary_materials', 'reviewers')
+
+
+class PaperSerializerPeer(serializers.ModelSerializer):
+    """
+        Serializer to facilitate adding and removing reviewers and the editor.
+        This should be used by views that have admin level permissions only.
+    """
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    editor = serializers.PrimaryKeyRelatedField(read_only=True)
+    reviewers = UserDetailsSerializer(many=True)
+
+    class Meta:
+        model = Paper
+        fields = ('id', 'user', 'editor', 'reviewers')
+
+
+class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
+    """
+        Ensure that a reviewer can be added an removed to a paper.
+    """
+    permission_classes = (IsAuthenticated, IsAdminUser)
+    serializer_class = PaperSerializerPeer
+
+    def get_object(self, pk=None):
+        try:
+            paper = Paper.objects.get(pk=pk)
+        except Paper.DoesNotExist:
+            paper = None
+        return paper
+
+    def get_user(self, request):
+        try:
+            pk = request.data["user_pk"]
+            user = User.objects.get(pk=pk)
+        except Exception:
+            user = None
+        return user
+
+    def get(self, request, pk=None, *args, **kwargs):
+        paper = self.get_object(pk)
+        if paper:
+            serializer = self.serializer_class(paper)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"details": "Paper not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk=None, *args, **kwargs):
+        paper = self.get_object(pk)
+        user = self.get_user(request)
+        if paper and user:
+            paper.reviewers.add(user)
+            serializer = self.serializer_class(paper)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"details": "Paper or User not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk=None, *args, **kwargs):
+        paper = self.get_object(pk)
+        user = self.get_user(request)
+        if paper and user:
+            paper.reviewers.remove(user)
+            serializer = self.serializer_class(paper)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"details": "Paper or User not found!"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PaperDetail(generics.RetrieveAPIView):

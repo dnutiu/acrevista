@@ -566,3 +566,30 @@ class PaperTest(APITestCase):
                                          HTTP_AUTHORIZATION=self.authorization_header)
         response = journal.set_editor(request, paper.pk)
         self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_staff_can_add_remove_reviewers(self):
+        """
+            Ensure that a staff member is able to add and remove reviewers.
+        """
+        data = {
+            "user_pk": self.test_user.pk
+        }
+        paper = Paper.objects.create(user=self.test_user)
+
+        response = self.client.put(reverse('api:api-papers-reviewer-add', kwargs={'pk': paper.pk}), data=data,
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.test_user.is_staff = True
+        self.test_user.save()
+
+        response = self.client.put(reverse('api:api-papers-reviewer-add', kwargs={'pk': paper.pk}), data=data,
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(paper.reviewers.last(), self.test_user)
+
+        response = self.client.delete(reverse('api:api-papers-reviewer-add', kwargs={'pk': paper.pk}), data=data,
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(paper.reviewers.last(), None)
