@@ -384,7 +384,7 @@ class PaperTest(APITestCase):
 
         # The response will now be an array of order dicts that will have the user pk equal to the test user's.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]["user"], self.test_user.pk)
+        self.assertEqual(response.data[0]["user"]["id"], self.test_user.pk)
 
     def test_user_can_list_all_papers(self):
         """
@@ -413,7 +413,7 @@ class PaperTest(APITestCase):
         response = self.client.get(self.papers_editor, None, content_type='application/json',
                                    HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]["editor"], self.test_user.pk)
+        self.assertEqual(response.data[0]["editor"]["id"], self.test_user.pk)
 
     def test_user_can_list_no_editor_papers(self):
         """
@@ -519,12 +519,12 @@ class PaperTest(APITestCase):
                                       HTTP_AUTHORIZATION=staff_token)
         response = journal.PaperDetail.as_view()(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['user'], staff_user.pk)
+        self.assertEqual(response.data['user']['id'], staff_user.pk)
 
         # Staff user can retrieve testuser's paper
         response = journal.PaperDetail.as_view()(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['user'], self.test_user.pk)
+        self.assertEqual(response.data['user']['id'], self.test_user.pk)
 
     def test_staff_can_set_editor(self):
         """
@@ -590,6 +590,6 @@ class PaperTest(APITestCase):
         self.assertEqual(paper.reviewers.last(), self.test_user)
 
         response = self.client.delete(reverse('api:api-papers-reviewer-add', kwargs={'pk': paper.pk}), data=data,
-                                   HTTP_AUTHORIZATION=self.authorization_header)
+                                      HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(paper.reviewers.last(), None)

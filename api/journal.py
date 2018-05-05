@@ -50,8 +50,8 @@ class PaperSerializer(serializers.ModelSerializer):
     """
         Serializer for the Paper model.
     """
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-    editor = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = UserDetailsSerializer(read_only=True)
+    editor = UserDetailsSerializer(read_only=True)
     title = serializers.CharField(max_length=256, required=True)
     description = serializers.CharField(max_length=2000, required=True)
     authors = serializers.CharField(max_length=4096, required=True)
