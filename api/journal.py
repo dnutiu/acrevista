@@ -116,7 +116,7 @@ class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
         if paper:
             serializer = self.serializer_class(paper)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({"details": "Paper not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"details": "Paper not found!"}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk=None, *args, **kwargs):
         paper = self.get_object(pk)
@@ -125,7 +125,7 @@ class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
             paper.reviewers.add(user)
             serializer = self.serializer_class(paper)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({"details": "Paper or User not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"details": "Paper or User not found!"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk=None, *args, **kwargs):
         paper = self.get_object(pk)
@@ -134,7 +134,7 @@ class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
             paper.reviewers.remove(user)
             serializer = self.serializer_class(paper)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({"details": "Paper or User not found!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"details": "Paper or User not found!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaperDetail(generics.RetrieveAPIView):
