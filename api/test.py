@@ -593,3 +593,16 @@ class PaperTest(APITestCase):
                                       HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(paper.reviewers.last(), None)
+
+    def test_user_can_list_reviewer_papers(self):
+        """
+            Ensure than an editor can list papers where he's assigned as a reviewer.
+        """
+        Paper.objects.create(user=self.test_user, editor=self.test_user).reviewers.add(self.test_user)
+        Paper.objects.create(user=self.test_user).reviewers.add(self.test_user)
+        Paper.objects.create(user=self.test_user)
+
+        response = self.client.get(reverse('api:api-papers-reviewer'), None, content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
