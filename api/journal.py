@@ -6,12 +6,13 @@ import itertools
 from django.contrib.auth.models import User
 from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from api.permissions import PublicEndpoint
+from api.permissions import PublicEndpoint, UserIsReviewer
 from api.profile import UserDetailsSerializer
-from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR
+from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR, Review
 
 PAPER__STATUS_CHOICES = set(itertools.chain.from_iterable(Paper.STATUS_CHOICES))
 
@@ -210,3 +211,43 @@ class PaperListNoEditor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return Paper.objects.all().filter(editor=None)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """
+        Serializer for the Review model.
+    """
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    paper = serializers.PrimaryKeyRelatedField(queryset=Paper.objects.all(), required=True)
+    editor_review = serializers.BooleanField(read_only=True)
+    appropriate = serializers.CharField(required=True)
+    recommendation = serializers.CharField(required=True)
+    comment = serializers.CharField(required=True)
+
+    class Meta:
+        model = Review
+        fields = ('id', 'user', 'paper', 'editor_review', 'created', 'appropriate', 'recommendation', 'comment')
+
+
+class ReviewAddView(generics.CreateAPIView):
+    """
+        Ensure that a review can be created.
+    """
+    permission_classes = (IsAuthenticated, UserIsReviewer)
+    queryset = Review.objects.all()
+    paper_queryset = Paper.objects.all()
+
+    def check_if_user_is_reviewer(self, request=None, pk=None):
+        obj = get_object_or_404(self.paper_queryset, pk=pk)
+        self.check_object_permissions(request=request, obj=obj)
+        return obj
+
+    def post(self, request, pk=None, *args, **kwargs):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            paper = self.check_if_user_is_reviewer(request=request, pk=request.data['paper'])
+            is_editor_review = paper.editor == request.user
+            serializer.save(user=request.user, editor_review=is_editor_review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

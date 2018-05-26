@@ -606,3 +606,46 @@ class PaperTest(APITestCase):
                                    HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
+
+    def test_user_can_submit_review(self):
+        """
+            Ensure that an user can submit a review to a paper on which he's assigned as a reviewer.
+        """
+        paper = Paper.objects.create(user=self.test_user)
+        data = {
+            "paper": paper.id,
+            "appropriate": "not_appropriate",
+            "recommendation": "0",
+            "comment": "test"
+        }
+
+        # Test user should be able to add a review if he's not assigned as a reviewer.
+        response = self.client.post(reverse('api:api-review-add'), json.dumps(data), content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Now he should be able to add the review.
+        paper.reviewers.add(self.test_user)
+        response = self.client.post(reverse('api:api-review-add'), json.dumps(data), content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(paper.reviews.all()), 1)
+        self.assertEqual(response.data['editor_review'], False)
+
+    def test_user_can_submit_editor_review(self):
+        """
+            Ensure an editor can submit an editor review.
+        """
+        paper = Paper.objects.create(user=self.test_user, editor=self.test_user)
+        paper.reviewers.add(self.test_user)
+        data = {
+            "paper": paper.id,
+            "appropriate": "not_appropriate",
+            "recommendation": "0",
+            "comment": "test"
+        }
+        response = self.client.post(reverse('api:api-review-add'), json.dumps(data), content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(paper.reviews.all()), 1)
+        self.assertEqual(response.data['editor_review'], True)

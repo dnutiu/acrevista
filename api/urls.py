@@ -3,7 +3,7 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify
 
 from api.account import UserCreate, TestPermissions, ChangePasswordView, ChangeNameView
 from api.journal import papers_count, PaperListSubmitted, PaperListAll, PaperListEditor, PaperListNoEditor, PaperDetail, \
-    set_editor, AddRemoveReviewer, PaperListReviewer
+    set_editor, AddRemoveReviewer, PaperListReviewer, ReviewAddView
 from api.profile import ProfileDetail, valid_titles, valid_countries
 
 urlpatterns = [
@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^papers/no-editor/$', PaperListNoEditor.as_view(), name="api-papers-no-editor"),
     url(r'^papers/detail/(?P<pk>[0-9]+)/$', PaperDetail.as_view(), name="api-paper-detail"),
     url(r'^papers/$', PaperListSubmitted.as_view(), name="api-papers-submitted"),
+    url(r'^review/$', ReviewAddView.as_view(), name="api-review-add"),
 
     # Test
     url(r'^prajituri/$', TestPermissions.as_view(), name="api-test-protected"),
