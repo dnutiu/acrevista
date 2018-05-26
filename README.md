@@ -2,6 +2,8 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/52422b3e9f00467db7f6f50e0509bb8b)](https://www.codacy.com/app/Metonimie/acrevista?utm_source=github.com&utm_medium=referral&utm_content=Metonimie/acrevista&utm_campaign=badger)
 
+[![Build Status](https://travis-ci.org/dnutiu/acrevista.svg?branch=master)](https://travis-ci.org/dnutiu/acrevista)
+
 This application was written for **Python 3**.
 
 Requirements
