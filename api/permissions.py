@@ -17,12 +17,16 @@ class PublicEndpoint(permissions.BasePermission):
         return True
 
 
-class UserIsReviewer(permissions.BasePermission):
+class UserCanReview(permissions.BasePermission):
     """
-    Makes sure that the user is assigned as a reviewer to the paper or that the user is a staff member.
+        Ensure that a user can submit a review by fulfilling the following conditions:
+            - User is listed as a reviewer for the selected paper.
+            - User is an editor for the selected paper.
+            - User is a staff member.
     """
 
     def has_object_permission(self, request, view, obj):
         is_reviewer = obj.reviewers.filter(id=request.user.id).exists()
         is_admin = request.user.is_staff
-        return is_reviewer or is_admin
+        is_editor = obj.editor == request.user
+        return is_reviewer or is_admin or is_editor

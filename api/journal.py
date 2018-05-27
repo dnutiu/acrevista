@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from api.permissions import PublicEndpoint, UserIsReviewer
+from api.permissions import PublicEndpoint, UserCanReview
 from api.profile import UserDetailsSerializer
 from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR, Review
 
@@ -244,7 +244,7 @@ class ReviewAddView(generics.CreateAPIView):
     """
         Ensure that a review can be created.
     """
-    permission_classes = (IsAuthenticated, UserIsReviewer)
+    permission_classes = (IsAuthenticated, UserCanReview)
     queryset = Review.objects.all()
     paper_queryset = Paper.objects.all()
 
@@ -280,7 +280,7 @@ class ReviewRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     """
         Ensure that a review can be retrieved and updated.
     """
-    permission_classes = (IsAuthenticated, UserIsReviewer)
+    permission_classes = (IsAuthenticated, UserCanReview)
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     paper_queryset = Paper.objects.all()
