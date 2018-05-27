@@ -7,7 +7,7 @@ from api import journal
 from django.test.client import RequestFactory
 from django.core.files import temp as tempfile
 from account.models import Profile
-from journal.models import Paper
+from journal.models import Paper, Review
 
 
 class AccountsTest(APITestCase):
@@ -610,6 +610,7 @@ class PaperTest(APITestCase):
     def test_user_can_submit_review(self):
         """
             Ensure that an user can submit a review to a paper on which he's assigned as a reviewer.
+            Only one review per user should be submitted for a paper.
         """
         paper = Paper.objects.create(user=self.test_user)
         data = {
@@ -632,6 +633,12 @@ class PaperTest(APITestCase):
         self.assertEqual(len(paper.reviews.all()), 1)
         self.assertEqual(response.data['editor_review'], False)
 
+        # Only one review should be submitted
+        paper.reviewers.add(self.test_user)
+        response = self.client.post(reverse('api:api-review-add'), json.dumps(data), content_type='application/json',
+                                    HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_user_can_submit_editor_review(self):
         """
             Ensure an editor can submit an editor review.
@@ -649,3 +656,32 @@ class PaperTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(paper.reviews.all()), 1)
         self.assertEqual(response.data['editor_review'], True)
+
+    def test_user_can_get_and_update_review(self):
+        """
+            Ensure that an user can retrieve and update a review.
+        """
+        paper = Paper.objects.create(user=self.test_user, editor=self.test_user)
+        Review.objects.create(user=self.test_user, paper=paper,
+                              appropriate="appropriate", editor_review=True,
+                              recommendation="0")
+        paper.reviewers.add(self.test_user)
+        data = {
+            "appropriate": "not_appropriate",
+            "recommendation": "+2",
+            "comment": "test"
+        }
+
+        # User can get review
+        response = self.client.get(reverse('api:api-paper-review', kwargs={'pk': paper.id}),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # User can update review
+        response = self.client.put(reverse('api:api-paper-review', kwargs={'pk': paper.id}), data=json.dumps(data),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        review = Review.objects.all().first()  # Get the only review
+        self.assertEqual(review.recommendation, data['recommendation'])

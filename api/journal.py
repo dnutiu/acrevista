@@ -15,7 +15,8 @@ from api.profile import UserDetailsSerializer
 from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR, Review
 
 PAPER__STATUS_CHOICES = set(itertools.chain.from_iterable(Paper.STATUS_CHOICES))
-
+REVIEW_APPROPRIATE_CHOICES = set(itertools.chain.from_iterable(Review.APPROPRIATE_CHOICES))
+REVIEW_RECOMMENDATION_CHOICES = set(itertools.chain.from_iterable(Review.RECOMMENDATION_CHOICES))
 
 @api_view(['GET'])
 @permission_classes((PublicEndpoint,))
@@ -217,12 +218,22 @@ class ReviewSerializer(serializers.ModelSerializer):
     """
         Serializer for the Review model.
     """
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = UserDetailsSerializer(read_only=True)
     paper = serializers.PrimaryKeyRelatedField(queryset=Paper.objects.all(), required=True)
     editor_review = serializers.BooleanField(read_only=True)
     appropriate = serializers.CharField(required=True)
     recommendation = serializers.CharField(required=True)
     comment = serializers.CharField(required=True)
+
+    def validate_appropriate(self, value):
+        if value not in REVIEW_APPROPRIATE_CHOICES:
+            raise serializers.ValidationError("Invalid value for field: appropriate")
+        return value
+
+    def validate_recommendation(self, value):
+        if value not in REVIEW_RECOMMENDATION_CHOICES:
+            raise serializers.ValidationError("Invalid value for field: recommendation")
+        return value
 
     class Meta:
         model = Review
@@ -238,16 +249,62 @@ class ReviewAddView(generics.CreateAPIView):
     paper_queryset = Paper.objects.all()
 
     def check_if_user_is_reviewer(self, request=None, pk=None):
+        """
+            Ensure that the user is a reviewer.
+        """
         obj = get_object_or_404(self.paper_queryset, pk=pk)
         self.check_object_permissions(request=request, obj=obj)
         return obj
+
+    def check_if_review_has_been_submitted(self, request=None, paper=None):
+        """
+            Ensure that an user will submit only one review per paper.
+        """
+        review_exists = self.queryset.filter(user=request.user, paper=paper).exists()
+        if review_exists:
+            self.permission_denied(request, "You've already submitted a review for this paper!")
 
     def post(self, request, pk=None, *args, **kwargs):
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
             paper = self.check_if_user_is_reviewer(request=request, pk=request.data['paper'])
+            self.check_if_review_has_been_submitted(request, paper.id)
             is_editor_review = paper.editor == request.user
             serializer.save(user=request.user, editor_review=is_editor_review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    """
+        Ensure that a review can be retrieved and updated.
+    """
+    permission_classes = (IsAuthenticated, UserIsReviewer)
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    paper_queryset = Paper.objects.all()
+
+    def check_if_user_is_reviewer(self, request=None, pk=None):
+        obj = get_object_or_404(self.paper_queryset, pk=pk)
+        self.check_object_permissions(request=request, obj=obj)
+        return obj
+
+    def get_object(self, pk=None):
+        paper = get_object_or_404(self.paper_queryset, pk=pk)
+        reviews_by_user = get_object_or_404(paper.reviews, user=self.request.user)
+        return reviews_by_user
+
+    def get(self, request, pk=None, *args, **kwargs):
+        review = self.get_object(pk=pk)
+        serializer = self.serializer_class(review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk=None, *args, **kwargs):
+        review = self.get_object(pk=pk)
+        serializer = self.serializer_class(review, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
