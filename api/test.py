@@ -685,3 +685,22 @@ class PaperTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         review = Review.objects.all().first()  # Get the only review
         self.assertEqual(review.recommendation, data['recommendation'])
+
+    def editor_can_get_list_of_reviews(self):
+        """
+            Ensure that an editor can get the list of reviews for his paper.
+        """
+        paper = Paper.objects.create(user=self.test_user)
+        response = self.client.get(reverse('api:api-paper-reviews', kwargs={'pk': paper.id}),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        # The user is not an editor.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        paper.editor = self.test_user
+        paper.save()
+
+        response = self.client.get(reverse('api:api-paper-reviews', kwargs={'pk': paper.id}),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

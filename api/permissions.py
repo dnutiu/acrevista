@@ -30,3 +30,14 @@ class UserCanReview(permissions.BasePermission):
         is_admin = request.user.is_staff
         is_editor = obj.editor == request.user
         return is_reviewer or is_admin or is_editor
+
+
+class UserIsEditor(permissions.BasePermission):
+    """
+        Ensure that a user is assigned as an editor.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        is_admin = request.user.is_staff
+        is_editor = obj.editor == request.user
+        return is_admin or is_editor

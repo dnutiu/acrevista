@@ -10,13 +10,14 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from api.permissions import PublicEndpoint, UserCanReview
+from api.permissions import PublicEndpoint, UserCanReview, UserIsEditor
 from api.profile import UserDetailsSerializer
 from journal.models import Paper, JOURNAL_PAPER_FILE_VALIDATOR, Review
 
 PAPER__STATUS_CHOICES = set(itertools.chain.from_iterable(Paper.STATUS_CHOICES))
 REVIEW_APPROPRIATE_CHOICES = set(itertools.chain.from_iterable(Review.APPROPRIATE_CHOICES))
 REVIEW_RECOMMENDATION_CHOICES = set(itertools.chain.from_iterable(Review.RECOMMENDATION_CHOICES))
+
 
 @api_view(['GET'])
 @permission_classes((PublicEndpoint,))
@@ -308,3 +309,23 @@ class ReviewRetrieveUpdateView(generics.RetrieveUpdateAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewListView(generics.ListAPIView):
+    """
+        Returns the list of reviews for the requested paper. Paper is identified by pk.
+    """
+    permission_classes = (IsAuthenticated, UserIsEditor)
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    paper_queryset = Paper.objects.all()
+
+    def get_object(self, pk=None):
+        paper = get_object_or_404(self.paper_queryset, pk=pk)
+        self.check_object_permissions(request=self.request, obj=paper)
+        return paper.reviews
+
+    def get(self, request, pk=None, *args, **kwargs):
+        reviews = self.get_object(pk=pk)
+        serializer = self.serializer_class(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
