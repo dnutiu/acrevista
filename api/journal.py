@@ -4,6 +4,7 @@
 import itertools
 
 from django.contrib.auth.models import User
+from django.http import Http404
 from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.generics import get_object_or_404
@@ -328,4 +329,25 @@ class ReviewListView(generics.ListAPIView):
     def get(self, request, pk=None, *args, **kwargs):
         reviews = self.get_object(pk=pk)
         serializer = self.serializer_class(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EditorReviewView(generics.ListAPIView):
+    """
+        Returns the editor review for the specified paper.
+    """
+    permission_classes = (IsAuthenticated,)
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    paper_queryset = Paper.objects.all()
+
+    def get_object(self, pk=None):
+        paper = get_object_or_404(self.paper_queryset, pk=pk)
+        return paper.reviews.filter(editor_review=True).first()
+
+    def get(self, request, pk=None, *args, **kwargs):
+        review = self.get_object(pk=pk)
+        if not review:
+            raise Http404
+        serializer = self.serializer_class(review)
         return Response(serializer.data, status=status.HTTP_200_OK)

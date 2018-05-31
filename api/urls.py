@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^papers/detail/(?P<pk>[0-9]+)/$', journal.PaperDetail.as_view(), name="api-paper-detail"),
     url(r'^papers/review/(?P<pk>[0-9]+)/$', journal.ReviewRetrieveUpdateView.as_view(), name="api-paper-review"),
     url(r'^papers/(?P<pk>[0-9]+)/reviews/$', journal.ReviewListView.as_view(), name="api-paper-reviews"),
+    url(r'^papers/(?P<pk>[0-9]+)/reviews/editor$', journal.EditorReviewView.as_view(), name="api-paper-reviews-editor"),
     url(r'^papers/$', journal.PaperListSubmitted.as_view(), name="api-papers-submitted"),
     url(r'^review/$', journal.ReviewAddView.as_view(), name="api-review-add"),
 

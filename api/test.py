@@ -686,7 +686,7 @@ class PaperTest(APITestCase):
         review = Review.objects.all().first()  # Get the only review
         self.assertEqual(review.recommendation, data['recommendation'])
 
-    def editor_can_get_list_of_reviews(self):
+    def test_editor_can_get_list_of_reviews(self):
         """
             Ensure that an editor can get the list of reviews for his paper.
         """
@@ -701,6 +701,28 @@ class PaperTest(APITestCase):
         paper.save()
 
         response = self.client.get(reverse('api:api-paper-reviews', kwargs={'pk': paper.id}),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_get_editor_review(self):
+        """
+            Ensure that an user can get the editor review for the paper if it exists.
+        """
+        paper = Paper.objects.create(user=self.test_user)
+        Review.objects.create(user=self.test_user, paper=paper,
+                              appropriate="appropriate", editor_review=False,
+                              recommendation="0")
+
+        response = self.client.get(reverse('api:api-paper-reviews-editor', kwargs={'pk': paper.id}),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        Review.objects.create(user=self.test_user, paper=paper,
+                              appropriate="appropriate", editor_review=True,
+                              recommendation="0")
+        response = self.client.get(reverse('api:api-paper-reviews-editor', kwargs={'pk': paper.id}),
                                    content_type='application/json',
                                    HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
