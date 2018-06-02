@@ -4,6 +4,7 @@
 import itertools
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import Http404
 from rest_framework import status, serializers, generics
 from rest_framework.decorators import permission_classes, api_view
@@ -152,7 +153,7 @@ class PaperDetail(generics.RetrieveAPIView):
         if self.request.user.is_staff:
             return Paper.objects.all()
 
-        return Paper.objects.all().filter(user=self.request.user)
+        return Paper.objects.all().filter(Q(user=self.request.user) | Q(editor=self.request.user))
 
 
 class PaperListSubmitted(generics.ListCreateAPIView):
