@@ -404,20 +404,38 @@ class PaperTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
-    def test_user_can_list_editor_papers(self):
+    def test_user_can_list_editor_self_papers(self):
         """
             Ensure than an editor can list papers where he's assigned as an editor.
         """
         Paper.objects.create(user=self.test_user, editor=self.test_user)
         Paper.objects.create(user=self.test_user)
-        response = self.client.get(self.papers_editor, None, content_type='application/json',
+        response = self.client.get(reverse("api:api-papers-editor-self"), None, content_type='application/json',
                                    HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["editor"]["id"], self.test_user.pk)
 
-    def test_user_can_list_no_editor_papers(self):
+    def test_user_can_list_editor_papers(self):
         """
             Ensure than an editor can list papers where there are any editors assigned.
+        """
+        Paper.objects.create(user=self.test_user, title="NoEditorPaper")
+        Paper.objects.create(user=self.test_user, editor=self.test_user, title="EditorPaper")
+        response = self.client.get(self.papers_editor, None, content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Make test user a staff member.
+        self.test_user.is_staff = True
+        self.test_user.save()
+        response = self.client.get(self.papers_no_editor, None, content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["title"], "NoEditorPaper")
+
+    def test_user_can_list_no_editor_papers(self):
+        """
+            Ensure than an editor can list papers where there are no editors assigned.
         """
         Paper.objects.create(user=self.test_user, editor=self.test_user, title="EditorPaper")
         Paper.objects.create(user=self.test_user, title="NoEditorPaper")

@@ -184,7 +184,7 @@ class PaperListAll(generics.ListAPIView):
     permission_classes = (IsAuthenticated, IsAdminUser)
 
 
-class PaperListEditor(generics.ListAPIView):
+class PaperListEditorSelfView(generics.ListAPIView):
     """
         This view lists the papers where the user is an editor.
     """
@@ -193,6 +193,17 @@ class PaperListEditor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return Paper.objects.all().filter(editor=self.request.user)
+
+
+class PaperListEditor(generics.ListAPIView):
+    """
+        This view lists the papers that have been assigned an editor.
+    """
+    serializer_class = PaperSerializer
+    permission_classes = (IsAuthenticated, IsAdminUser)
+
+    def get_queryset(self, *args, **kwargs):
+        return Paper.objects.all().exclude(editor__isnull=True)
 
 
 class PaperListReviewer(generics.ListAPIView):

@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^papers/count/$', journal.papers_count, name="api-papers-count"),
     url(r'^papers/all/$', journal.PaperListAll.as_view(), name="api-papers-all"),
     url(r'^papers/editor/$', journal.PaperListEditor.as_view(), name="api-papers-editor"),
+    url(r'^papers/editor/self$', journal.PaperListEditorSelfView.as_view(), name="api-papers-editor-self"),
     url(r'^papers/reviewer/$', journal.PaperListReviewer.as_view(), name="api-papers-reviewer"),
     url(r'^papers/editor/(?P<pk>[0-9]+)/$', journal.set_editor, name="api-papers-editor-add"),
     url(r'^papers/reviewer/(?P<pk>[0-9]+)/$', journal.AddRemoveReviewer.as_view(), name="api-papers-reviewer-add"),
