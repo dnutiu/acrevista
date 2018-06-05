@@ -186,7 +186,7 @@ class PaperListAll(generics.ListAPIView):
 
 class PaperListEditorSelfView(generics.ListAPIView):
     """
-        This view lists the papers where the user is an editor.
+        This view lists the papers where the user is the editor.
     """
     serializer_class = PaperSerializer
     permission_classes = (IsAuthenticated,)
@@ -197,7 +197,7 @@ class PaperListEditorSelfView(generics.ListAPIView):
 
 class PaperListEditor(generics.ListAPIView):
     """
-        This view lists the papers that have been assigned an editor.
+        This view lists the papers that have an editor.
     """
     serializer_class = PaperSerializer
     permission_classes = (IsAuthenticated, IsAdminUser)
