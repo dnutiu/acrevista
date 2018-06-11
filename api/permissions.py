@@ -41,3 +41,14 @@ class UserIsEditor(permissions.BasePermission):
         is_admin = request.user.is_staff
         is_editor = obj.editor == request.user
         return is_admin or is_editor
+
+
+class UserIsEditorInActivePaper(permissions.BasePermission):
+    """
+         Ensure that the user is editor to a paper that is's current status is under review.
+    """
+
+    def has_permission(self, request, view):
+        from journal.models import Paper
+        paper_exists = Paper.objects.filter(editor=request.user, status=Paper.STATUS_CHOICES[1][0]).exists()
+        return paper_exists

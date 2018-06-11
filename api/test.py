@@ -744,3 +744,21 @@ class PaperTest(APITestCase):
                                    content_type='application/json',
                                    HTTP_AUTHORIZATION=self.authorization_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_retrieve_user_list(self):
+        """
+            Ensure that an user who is an editor to an active paper with status under_review can query the user list.
+        """
+        paper = Paper.objects.create(user=self.test_user)
+        response = self.client.get("{0}?email={1}".format(reverse('api:api-list-users'), "test"),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Status will be automatically changed to under review.
+        paper.editor = self.test_user
+        paper.save()
+
+        response = self.client.get("{0}?email={1}".format(reverse('api:api-list-users'), "test"),
+                                   content_type='application/json',
+                                   HTTP_AUTHORIZATION=self.authorization_header)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

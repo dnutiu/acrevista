@@ -5,7 +5,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from rest_framework import serializers, status, permissions
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.validators import UniqueValidator
 from rest_framework.views import APIView
@@ -13,7 +13,7 @@ from rest_framework_jwt import authentication
 
 from account.models import Profile
 from acrevista import settings
-from api.permissions import PublicEndpoint
+from api.permissions import PublicEndpoint, UserIsEditorInActivePaper
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -159,3 +159,22 @@ class ChangeNameView(UpdateAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserListView(ListAPIView):
+    """
+        Ensure that list of users that have email address likely similar to the 'email' query param is returned.
+    """
+    model = User
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated, UserIsEditorInActivePaper)
+    queryset = User.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        email = request.GET.get('email')
+        if email:
+            users = self.queryset.filter(email__contains=email)
+            serializer = self.serializer_class(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response({"details": "The GET param email is missing!"}, status=status.HTTP_400_BAD_REQUEST)
