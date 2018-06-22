@@ -6,7 +6,6 @@ from rest_framework import status
 from api import journal
 from django.test.client import RequestFactory
 from django.core.files import temp as tempfile
-from account.models import Profile
 from journal.models import Paper, Review
 
 
@@ -14,7 +13,6 @@ class AccountsTest(APITestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
-        Profile.objects.create(user=self.test_user)
 
         # URL's
         self.create_url = reverse('api:api-register')
@@ -206,9 +204,6 @@ class ProfileTest(APITestCase):
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
         self.staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
 
-        # Create the profiles
-        Profile.objects.create(user=self.test_user)
-        Profile.objects.create(user=self.staff_user)
 
         # URL's
         self.get_token_url = reverse('api:api-token-login')
@@ -340,7 +335,6 @@ class PaperTest(APITestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
-        Profile.objects.create(id=0, user=self.test_user)
 
         # URL's
         self.papers_count = reverse('api:api-papers-count')
@@ -521,7 +515,6 @@ class PaperTest(APITestCase):
 
         # User cannot retrieve paper from staff.
         staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
-        Profile.objects.create(user=staff_user)
         Paper.objects.create(user=staff_user)
         response = journal.PaperDetail.as_view()(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -550,9 +543,7 @@ class PaperTest(APITestCase):
         """
         request_factory = RequestFactory()
         staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
-        Profile.objects.create(user=staff_user)
         paper = Paper.objects.create(user=self.test_user)
-        Paper.objects.create(user=staff_user)
 
         # Authenticate the staff user
         data = {

@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from . import utilities
 
 
@@ -290,3 +293,11 @@ def create_login_token(user):
     token.save()
 
     return token
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(sender, instance, created, **kwargs):
+    """
+        Ensure that every new user gets a profile.
+    """
+    if created:
+        Profile.objects.create(user=instance)
