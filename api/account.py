@@ -56,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password', 'first_name', 'last_name', 'is_staff')
 
 
-class UserCreate(APIView):
+class UserCreateView(APIView):
     """
     Creates the user.
     """
@@ -76,7 +76,7 @@ class UserCreate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestPermissions(APIView):
+class TestPermissionsView(APIView):
     """
     Test whether an user can access a protected endpoint.
     """

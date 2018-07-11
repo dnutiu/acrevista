@@ -33,7 +33,6 @@ def papers_count(request):
 @api_view(['POST', 'DELETE'])
 @permission_classes((IsAuthenticated, IsAdminUser))
 def set_editor(request, pk):
-    # TODO: Needs refactoring. See AddRemoveReviewer class view, should be similar.
     """
         Ensure that a staff member can set itself as an editor.
     """
@@ -94,7 +93,7 @@ class PaperSerializerPeer(serializers.ModelSerializer):
         fields = ('id', 'user', 'editor', 'reviewers')
 
 
-class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
+class AddRemoveReviewerView(generics.RetrieveUpdateDestroyAPIView):
     """
         Ensure that a reviewer can be added an removed to a paper.
     """
@@ -142,7 +141,7 @@ class AddRemoveReviewer(generics.RetrieveUpdateDestroyAPIView):
         return Response({"details": "Paper or User not found!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PaperDetail(generics.RetrieveAPIView):
+class PaperDetailView(generics.RetrieveAPIView):
     """
         Retrieve the detail of a single paper.
     """
@@ -156,7 +155,7 @@ class PaperDetail(generics.RetrieveAPIView):
         return Paper.objects.all().filter(Q(user=self.request.user) | Q(editor=self.request.user))
 
 
-class PaperListSubmitted(generics.ListCreateAPIView):
+class PaperListSubmittedView(generics.ListCreateAPIView):
     """
         This view lists the papers currently belonging to a user and lets the user submit it's own papers.
     """
@@ -175,7 +174,7 @@ class PaperListSubmitted(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PaperListAll(generics.ListAPIView):
+class PaperListAllView(generics.ListAPIView):
     """
         This view lists the all the papers.
     """
@@ -195,7 +194,7 @@ class PaperListEditorSelfView(generics.ListAPIView):
         return Paper.objects.all().filter(editor=self.request.user)
 
 
-class PaperListEditor(generics.ListAPIView):
+class PaperListEditorView(generics.ListAPIView):
     """
         This view lists the papers that have an editor.
     """
@@ -206,7 +205,7 @@ class PaperListEditor(generics.ListAPIView):
         return Paper.objects.all().exclude(editor__isnull=True)
 
 
-class PaperListReviewer(generics.ListAPIView):
+class PaperListReviewerView(generics.ListAPIView):
     """
         This view lists the papers where the user is a reviewer.
     """
@@ -217,7 +216,7 @@ class PaperListReviewer(generics.ListAPIView):
         return Paper.objects.all().filter(reviewers=self.request.user)
 
 
-class PaperListNoEditor(generics.ListAPIView):
+class PaperListNoEditorView(generics.ListAPIView):
     """
         This view lists the papers that don't have an editor.
     """

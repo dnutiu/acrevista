@@ -72,7 +72,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('title', 'phone', 'country', 'affiliation', 'user')
 
 
-class ProfileDetail(APIView):
+class ProfileDetailView(APIView):
     """
         Retrieve or update the User's profile.
     """

@@ -469,7 +469,7 @@ class PaperTest(APITestCase):
         request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
                                        data=post_data)
 
-        response = journal.PaperListSubmitted.as_view()(request)
+        response = journal.PaperListSubmittedView.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_cannot_submit_incomplete_paper(self):
@@ -492,7 +492,7 @@ class PaperTest(APITestCase):
         request = request_factory.post(self.papers_submitted, HTTP_AUTHORIZATION=self.authorization_header,
                                        data=post_data)
 
-        response = journal.PaperListSubmitted.as_view()(request)
+        response = journal.PaperListSubmittedView.as_view()(request)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_user_can_get_paper_detail(self):
@@ -506,17 +506,17 @@ class PaperTest(APITestCase):
         Paper.objects.create(user=self.test_user)
 
         # User can retrieve it's own paper
-        response = journal.PaperDetail.as_view()(request, pk=1)
+        response = journal.PaperDetailView.as_view()(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # User will get 404 if paper is not found
-        response = journal.PaperDetail.as_view()(request, pk=0)
+        response = journal.PaperDetailView.as_view()(request, pk=0)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # User cannot retrieve paper from staff.
         staff_user = User.objects.create_user('staffuser', 'test@example.com', 'testpassword', is_staff=True)
         Paper.objects.create(user=staff_user)
-        response = journal.PaperDetail.as_view()(request, pk=2)
+        response = journal.PaperDetailView.as_view()(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # Authenticate the staff user & Check if the staff user can retrieve it's own paper
@@ -528,12 +528,12 @@ class PaperTest(APITestCase):
         staff_token = "JWT {}".format(response.data["token"])
         request = request_factory.get(reverse('api:api-paper-detail', kwargs={'pk': 1}),
                                       HTTP_AUTHORIZATION=staff_token)
-        response = journal.PaperDetail.as_view()(request, pk=2)
+        response = journal.PaperDetailView.as_view()(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['user']['id'], staff_user.pk)
 
         # Staff user can retrieve testuser's paper
-        response = journal.PaperDetail.as_view()(request, pk=1)
+        response = journal.PaperDetailView.as_view()(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['user']['id'], self.test_user.pk)
 
