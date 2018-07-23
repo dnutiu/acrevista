@@ -35,6 +35,7 @@ def papers_count(request):
 def set_editor(request, pk):
     """
         Ensure that a staff member can set itself as an editor.
+        :param pk - Paper's primary key on which to set the editor.
     """
     try:
         paper = Paper.objects.get(id=pk)
@@ -96,6 +97,7 @@ class PaperSerializerPeer(serializers.ModelSerializer):
 class AddRemoveReviewerView(generics.RetrieveUpdateDestroyAPIView):
     """
         Ensure that a reviewer can be added an removed to a paper.
+        :param pk: The primary key of the Paper on which the reviewer shall be added/removed.
     """
     permission_classes = (IsAuthenticated, IsAdminUser)
     serializer_class = PaperSerializerPeer
@@ -143,7 +145,9 @@ class AddRemoveReviewerView(generics.RetrieveUpdateDestroyAPIView):
 
 class PaperDetailView(generics.RetrieveAPIView):
     """
-        Retrieve the detail of a single paper.
+        Retrieve the detail of a single paper where it's submitter or editor is the user.
+        Staff users can use this view to retrieve details for all papers.
+        :param pk - The primary key of the paper for which to get the detail
     """
     serializer_class = PaperSerializer
     permission_classes = (IsAuthenticated,)
@@ -291,7 +295,10 @@ class ReviewAddView(generics.CreateAPIView):
 
 class ReviewRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     """
-        Ensure that a review can be retrieved and updated.
+        ReviewRetrieveUpdateView provides functionality for retrieving and updating a Review that belongs to a
+        particular Paper identified by pk. Each user can only submit a review per paper thus this view can be used
+        only for retrieving and updating user's self review.
+        :param pk: the primary key of the paper.
     """
     permission_classes = (IsAuthenticated, UserCanReview)
     queryset = Review.objects.all()
@@ -309,11 +316,21 @@ class ReviewRetrieveUpdateView(generics.RetrieveUpdateAPIView):
         return reviews_by_user
 
     def get(self, request, pk=None, *args, **kwargs):
+        """
+            Returns the user's review for the paper identified by pk or 404 if none exists.
+        :param pk: the primary key of the paper.
+        :return: the review.
+        """
         review = self.get_object(pk=pk)
         serializer = self.serializer_class(review)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk=None, *args, **kwargs):
+        """
+            Updates the user's review for the paper identified by pk.
+        :param pk:  the primary key of the paper.
+        :return: the updated review.
+        """
         review = self.get_object(pk=pk)
         serializer = self.serializer_class(review, data=request.data, partial=True)
         if serializer.is_valid():
