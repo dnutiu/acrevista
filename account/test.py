@@ -6,6 +6,9 @@ import datetime
 
 
 class LoginTokenTestCase(TestCase):
+    """
+        LoginTokenTestCase provides tests for the LoginToken feature.
+    """
     def setUp(self):
         self.user = User.objects.create(username="testing@testing.com", email="testing@testing.com")
         self.lt = LoginToken(user=self.user)

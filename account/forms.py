@@ -22,7 +22,7 @@ class EditProfileForm(forms.ModelForm):
         fields = ('title', 'phone', 'country', 'affiliation')
 
 
-# This form will change email for the user.
+# Form that will allow to change email for the user.
 class ChangeEmailForm(forms.ModelForm):
     username = forms.EmailField(label="Email", widget=forms.EmailInput, required=True)
     email = forms.EmailField(label="Email", widget=forms.EmailInput, required=False)
@@ -35,13 +35,13 @@ class ChangeEmailForm(forms.ModelForm):
         return self.cleaned_data['username']
 
 
-# This form will login the user.
+# Form will login the user.
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-# This form will register the user.
+# Form that will allow user registration.
 class UserRegistrationForm(forms.ModelForm):
     username = forms.EmailField(label="Email", widget=forms.EmailInput, required=True, max_length=64)
     first_name = forms.CharField(label="First Name", widget=forms.TextInput, required=True)

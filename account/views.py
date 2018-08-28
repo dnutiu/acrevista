@@ -62,6 +62,9 @@ def reject_invite(request, rev_id):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def cancel_invitation(request):
+    """
+        Function that will cancel the user's invitation.
+    """
     if not request.is_ajax():
         raise Http404
 
@@ -176,6 +179,12 @@ def generate_user_token(request):
 
 
 def change_personal_details(request):
+    """
+        Function that will change the user's personal details. The details are retrieved from the request's post data.
+        The name is changed using the ChangeNameForm and the profile using the EditProfileForm
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         name_form = ChangeNameForm(instance=request.user, data=request.POST)
         profile_form = EditProfileForm(instance=request.user.profile, data=request.POST)

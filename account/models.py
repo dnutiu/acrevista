@@ -36,6 +36,11 @@ class Invitation(models.Model):
 class Profile(models.Model):
     """
     The Profile class is used to associate a profile with a new user.
+    The profiles adds additional information to the end user like:
+    - The user's title
+    - The user's residence country
+    - The user's phone
+    - The user's affiliation
     """
     TITLE_CHOICES = (
         ('Dr', 'Dr'),

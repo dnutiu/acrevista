@@ -34,6 +34,9 @@ def jwt_response_payload_handler(token, user=None, request=None):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+        Serializer for the User object.
+    """
     email = serializers.EmailField(
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
@@ -58,7 +61,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserCreateView(APIView):
     """
-    Creates the user.
+    The UserCreateView creates the user.
     """
     permission_classes = (PublicEndpoint,)
 
@@ -78,7 +81,8 @@ class UserCreateView(APIView):
 
 class TestPermissionsView(APIView):
     """
-    Test whether an user can access a protected endpoint.
+    This is a special view. It's role is to
+    test whether an user can access a protected endpoint.
     """
 
     authentication_classes = (authentication.JSONWebTokenAuthentication,)
@@ -100,7 +104,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 class ChangePasswordView(UpdateAPIView):
     """
-    An endpoint for changing password.
+    ChangePasswordView is an endpoint for changing password.
     """
     serializer_class = ChangePasswordSerializer
     model = User
@@ -140,7 +144,7 @@ class ChangeNameSerializer(serializers.ModelSerializer):
 
 class ChangeNameView(UpdateAPIView):
     """
-    An endpoint for changing the name.
+    ChangePasswordView is an endpoint for changing the name.
     """
     model = User
     permission_classes = (permissions.IsAuthenticated,)
@@ -162,7 +166,8 @@ class ChangeNameView(UpdateAPIView):
 
 class UserListView(ListAPIView):
     """
-        Ensure that list of users that have email address likely similar to the 'email' query param is returned.
+        Ensure that list of users that have email address likely similar to the 'email' query param.
+        A json object containing many UserSerializer data is returned.
     """
     model = User
     serializer_class = UserSerializer

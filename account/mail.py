@@ -6,6 +6,13 @@ from django.core.mail import send_mail
 
 
 def send_review_invitation_email(recipient, a_url, d_url):
+    """
+    Function that sends an invitation email for the user. The user can then accept or reject the invitation using the
+    links provided by the parameters.
+    :param recipient: The email address of the recipient.
+    :param a_url: The accept url.
+    :param d_url: The decline url.
+    """
     subject = "Review requested!"
     message = '''
     Hello,

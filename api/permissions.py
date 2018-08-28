@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 class UserOwnsProfile(permissions.BasePermission):
     """
-    Makes sure that the user owns the Profile it was to get or that the user is a staff member.
+        Ensure that the user owns the Profile it was to get or that the user is a staff member.
     """
 
     def has_object_permission(self, request, view, obj):

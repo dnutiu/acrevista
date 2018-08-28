@@ -10,6 +10,9 @@ from journal.models import Paper, Review
 
 
 class AccountsTest(APITestCase):
+    """
+        Ensure that the accounts API is functioning properly.
+    """
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
@@ -199,6 +202,9 @@ class AccountsTest(APITestCase):
 
 
 class ProfileTest(APITestCase):
+    """
+        Ensure that the profile API is functioning properly.
+    """
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
@@ -332,6 +338,9 @@ class ProfileTest(APITestCase):
 
 
 class PaperTest(APITestCase):
+    """
+        Ensure that the paper API is functioning properly.
+    """
     def setUp(self):
         # We want to go ahead and originally create a user.
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')

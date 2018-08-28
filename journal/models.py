@@ -42,6 +42,9 @@ JOURNAL_PAPER_FILE_VALIDATOR = FileValidator(max_size=1024 * 1024 * 50,  # Max s
 
 
 class Paper(models.Model):
+    """
+        The paper model models a real world paper into a digital object.
+    """
     STATUS_CHOICES = (
         ('processing', 'Processing'),
         ('under_review', 'Under Review'),

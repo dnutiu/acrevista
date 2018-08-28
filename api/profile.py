@@ -23,7 +23,7 @@ PROFILE_VALID_TITLES = set(itertools.chain.from_iterable(Profile.TITLE_CHOICES))
 @permission_classes((PublicEndpoint,))
 def valid_titles(request):
     """
-    Retrieve a set of valid titles.
+        Return the set of valid titles as defined in the profile model.
     """
     return Response(PROFILE_VALID_TITLES, status=status.HTTP_200_OK)
 
@@ -32,14 +32,14 @@ def valid_titles(request):
 @permission_classes((PublicEndpoint,))
 def valid_countries(request):
     """
-    Retrieve a set of valid country names.
+        Return the set of valid country names as defined in the profile model.
     """
     return Response(PROFILE_VALID_COUNTRIES, status=status.HTTP_200_OK)
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
-        Serializes some of the safe user details.
+        UserDetailsSerializer is a serializer like UserSerializer but includes only safe to read fields.
     """
 
     class Meta:
@@ -49,7 +49,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
-        Serializes Profile model data.
+        ProfileSerializer ensures serialization for the Profile model.
     """
     user = UserDetailsSerializer(read_only=True)
     title = serializers.CharField(max_length=64, default='Dr')
@@ -74,7 +74,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class ProfileDetailView(APIView):
     """
-        Retrieve or update the User's profile.
+        ProfileDetailView acts as an endpoint with two functions, to retrieve the details of a profile and to update
+        the details of a profile. The profile is identified by the pk parameter that is provided in the URL.
     """
 
     permission_classes = (permissions.IsAuthenticated, UserOwnsProfile,)
@@ -89,7 +90,7 @@ class ProfileDetailView(APIView):
 
     def get(self, request, pk):
         """
-            Retrieves a user's profile based on the primary key.
+            Retrieves a user's profile, the profile is retrieved using the pk parameter provided in the url.
         """
         profile = self.get_object(request=request, pk=pk)
         serializer = ProfileSerializer(profile)
@@ -97,7 +98,7 @@ class ProfileDetailView(APIView):
 
     def put(self, request, pk):
         """
-            Updates the user's profile.
+            Updates the user's profile, the profile is retrieved using the pk parameter provided in the url.
         """
         profile = self.get_object(request, pk)
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
