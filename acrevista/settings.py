@@ -43,11 +43,6 @@ SITE_ID = 1
 # SECURITY WARNING: Must be set when using for production!
 ALLOWED_HOSTS = ['*']
 
-# Language settings
-LANGUAGES = [
-    ('en-us', 'English'),
-    ('ro', 'Romanian'),
-]
 
 # Logging
 LOGGING = {
@@ -103,22 +98,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # For Cross-Origin Headers
     'corsheaders',
 
-    # Django CMS required apps.
-    'django.contrib.sites',
+    # Django Rest Framework
     'rest_framework',
     'rest_framework.authtoken',
-    'cms',
-    'menus',
-    'treebeard',
-    'sekizai',
-    'djangocms_text_ckeditor',
-
-    # Used to ease working with forms.
-    'widget_tweaks',
 
     # Custom apps that power this website.
     'account',
@@ -137,11 +124,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # May needed to be removed.
-    'cms.middleware.utils.ApphookReloadMiddleware',
-    'cms.middleware.user.CurrentUserMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 ]
 
@@ -174,8 +156,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'cms.context_processors.cms_settings',
-                'sekizai.context_processors.sekizai',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -227,6 +207,12 @@ LOGIN_REDIRECT_URL = '/account/'
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+
+# Language settings
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('ro', 'Romanian'),
+]
 
 TIME_ZONE = 'UTC'
 

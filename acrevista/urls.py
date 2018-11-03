@@ -24,6 +24,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-    url(r'^', include('cms.urls')),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True})
 ]
