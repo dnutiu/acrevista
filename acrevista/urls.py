@@ -24,9 +24,6 @@ handler404 = 'account.views.custom_404'
 urlpatterns = [
     url(r'^$', journal_views.homepage, name="home"),  # Journal Homepage :)
     url(r'^admin/', admin.site.urls),
-    # Fixme: We can remove the bellow line when we fix namespace error for Django's password reset and password reset done view.
-    url(r'^account/', include('account.urls')),
-    url(r'^account/', include('account.urls', namespace='account', app_name='account')),
     url(r'^journal/', include('journal.urls', namespace='journal', app_name='journal')),
     url(r'^issues/', include('issues.urls', namespace='issues', app_name='issues')),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),

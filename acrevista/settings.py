@@ -136,7 +136,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'account.middleware.LoginTokenMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # May needed to be removed.
     'cms.middleware.utils.ApphookReloadMiddleware',
@@ -185,11 +184,6 @@ TEMPLATES = [
             ],
         },
     },
-]
-
-# Need by django CMS
-CMS_TEMPLATES = [
-    ('cms_home.html', 'Home page template'),
 ]
 
 WSGI_APPLICATION = 'acrevista.wsgi.application'

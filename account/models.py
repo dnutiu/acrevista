@@ -3,34 +3,6 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from . import utilities
-
-
-class LoginToken(models.Model):
-    """
-     LoginToken class provides a way for password less login.
-    """
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
-    token = models.CharField(max_length=64, default=utilities.generate_security_token)
-    expiry_date = models.DateTimeField(default=utilities.days_from_current_time)
-
-    def _srt_(self):
-        return "Login token of {}".format(self.user.username)
-
-class Invitation(models.Model):
-    """
-    This class provides a way to invite users to join the site and being redirected to a selected url.
-    """
-    email = models.CharField(max_length=256, blank=False)
-    name = models.CharField(max_length=256, blank=False)
-    url = models.CharField(max_length=256, blank=False)
-    token = models.CharField(max_length=64, default=utilities.generate_security_token(10))
-    # If this is null then the invitation will be considered as pending.
-    # If it's true or false the invitation will be considered as accepted or rejected.
-    accepted = models.NullBooleanField()
-
-    def _srt_(self):
-        return "Invitation for {}".format(self.email)
 
 # The Profile class extends Django's default user model.
 class Profile(models.Model):
@@ -252,52 +224,6 @@ class Profile(models.Model):
     def __srt__(self):
         return "Profile of user: {}".format(self.user.username)
 
-
-def create_review_invite(email, name, url, lt):
-    """
-    Creates a pending invitation
-    :param email:  The email of the invited user
-    :param name:  The name of the invitations
-    :param url: The url where to redirect
-    :param lt: The Login Token
-    :return: Invitation object
-    """
-    ri = Invitation()
-    ri.email = email
-    ri.name = name
-    ri.url = url
-    ri.login_token = lt
-    ri.save()
-
-    return ri
-
-
-def get_login_token(user):
-    """
-    Returns the LoginToken for the specified user
-    :param user: The requested user
-    :return: The login token object
-    """
-    token = LoginToken.objects.filter(user=user)
-    return token[0]
-
-def create_login_token(user):
-    """
-    Creates a new login token and it deletes the older ones
-    :param user: The user object on which to assign the login token
-    :return: LoginToken object
-    """
-    # Delete the old token if any.
-    token = LoginToken.objects.filter(user=user)
-    if token:
-        token.delete()
-
-    # Create a new LoginToken
-    token = LoginToken()
-    token.user = user
-    token.save()
-
-    return token
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile(sender, instance, created, **kwargs):
