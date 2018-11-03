@@ -25,7 +25,6 @@ urlpatterns = [
     url(r'^$', journal_views.homepage, name="home"),  # Journal Homepage :)
     url(r'^admin/', admin.site.urls),
     url(r'^journal/', include('journal.urls', namespace='journal', app_name='journal')),
-    url(r'^issues/', include('issues.urls', namespace='issues', app_name='issues')),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),

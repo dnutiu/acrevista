@@ -123,7 +123,6 @@ INSTALLED_APPS = [
     # Custom apps that power this website.
     'account',
     'journal',
-    'issues',
     'api'
 ]
 
