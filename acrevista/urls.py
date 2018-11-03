@@ -16,15 +16,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
-from journal import views as journal_views
 from . import settings
 
 
 handler404 = 'account.views.custom_404'
 urlpatterns = [
-    url(r'^$', journal_views.homepage, name="home"),  # Journal Homepage :)
     url(r'^admin/', admin.site.urls),
-    url(r'^journal/', include('journal.urls', namespace='journal', app_name='journal')),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     # Not suitable for production. https://docs.djangoproject.com/en/dev/howto/static-files/deployment/
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
